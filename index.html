@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>깜짝 선물!</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Malgun Gothic', sans-serif;
+            padding-top: 100px;
+            background-color: #f0f8ff;
+        }
+        #maltese-img {
+            display: none; /* 처음에는 이미지를 숨겨둡니다 */
+            max-width: 300px;
+            border-radius: 20px;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #ffb6c1;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button:hover {
+            background-color: #ff99a8;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>이 버튼을 누르면 놀라운 일이 생깁니다!</h1>
+    <button id="surprise-btn">눌러보세요!</button>
+
+    <img id="maltese-img" src="maltese.jpg" alt="귀여운 말티즈">
+    <audio id="bark-sound" src="bark.mp3"></audio>
+
+    <script>
+        const btn = document.getElementById('surprise-btn');
+        const img = document.getElementById('maltese-img');
+        const audio = document.getElementById('bark-sound');
+
+        btn.addEventListener('click', function() {
+            // 버튼을 누르면 이미지가 나타납니다.
+            img.style.display = 'block';
+            // 버튼을 누르면 소리가 재생됩니다.
+            audio.play();
+            // 장난 성공 후 버튼 텍스트 변경
+            btn.innerText = "왈왈!!";
+        });
+    </script>
+
+</body>
+</html>

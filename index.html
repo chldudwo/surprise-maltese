@@ -122,31 +122,35 @@
             margin-top: 5px;
         }
 
-        /* 말티즈 등장 영역 (처음엔 숨김) */
+/* 말티즈 등장 영역 (화면 꽉 차게, 절대 안 잘리게!) */
         #prank-zone {
             display: none;
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh; /* 화면 전체 크기 */
+            z-index: 9999;
+            background-color: black; /* 남는 여백은 까맣게 칠해서 집중도 상승 */
+            text-align: center;
+        }
+        #maltese-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 핵심 포인트! 사진 비율을 유지하며 화면에 꽉 차게 맞춰줌 */
+        }
+        .prank-text {
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 9999;
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            text-align: center;
-            width: 80%;
-            max-width: 350px;
-        }
-        #maltese-img {
-            max-width: 100%;
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-        .prank-text {
             color: #ef4444;
-            font-size: 26px;
+            font-size: 50px;
             font-weight: 900;
+            text-align: center;
+            width: 100%;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.9);
+            pointer-events: none; /* 글씨 때문에 사진 우클릭이 안 되는 현상 방지 */
         }
         /* 깜깜한 배경 (장난 효과 극대화) */
         #overlay {

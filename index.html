@@ -3,57 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>깜짝 선물!</title>
+    <title>검색 포털</title>
     <style>
         body {
+            margin: 0;
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
             text-align: center;
-            font-family: 'Malgun Gothic', sans-serif;
-            padding-top: 100px;
-            background-color: #f0f8ff;
+        }
+        /* 초록색 상단 테마 */
+        .header {
+            background-color: #03c75a; /* 익숙한 그 초록색 */
+            padding: 20px 0;
+            color: white;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+        /* 검색창 영역 */
+        .search-container {
+            margin-top: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-box {
+            border: 2px solid #03c75a;
+            border-radius: 2px 0 0 2px;
+            width: 50%;
+            max-width: 400px;
+            height: 50px;
+            padding: 0 15px;
+            font-size: 18px;
+            outline: none;
+        }
+        .search-btn {
+            background-color: #03c75a;
+            color: white;
+            border: none;
+            width: 60px;
+            height: 54px; /* input과 높이 맞춤 */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 0 2px 2px 0;
+        }
+        .search-btn:hover {
+            background-color: #02b350;
+        }
+        /* 하단 가짜 메뉴 */
+        .fake-menu {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            word-spacing: 15px;
+        }
+        /* 말티즈 등장 영역 */
+        #prank-zone {
+            display: none;
+            margin-top: 50px;
         }
         #maltese-img {
-            display: none; /* 처음에는 이미지를 숨겨둡니다 */
             max-width: 300px;
-            border-radius: 20px;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #ffb6c1;
-            border: none;
             border-radius: 10px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        button:hover {
-            background-color: #ff99a8;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
 
-    <h1>이 버튼을 누르면 놀라운 일이 생깁니다!</h1>
-    <button id="surprise-btn">눌러보세요!</button>
+    <div class="header">
+        N Search
+    </div>
 
-    <img id="maltese-img" src="maltese.jpg" alt="귀여운 말티즈">
-    <audio id="bark-sound" src="bark.mp3"></audio>
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="검색어를 입력하세요." id="search-input">
+        <button class="search-btn" id="surprise-btn">검색</button>
+    </div>
+
+    <div class="fake-menu">
+        메일 카페 블로그 지식iN 쇼핑
+    </div>
+
+    <div id="prank-zone">
+        <img id="maltese-img" src="maltese.jpg" alt="귀여운 말티즈">
+        <audio id="bark-sound" src="bark.mp3"></audio>
+        <h2 style="color: #03c75a;">왈왈!! 속았지!!</h2>
+    </div>
 
     <script>
         const btn = document.getElementById('surprise-btn');
-        const img = document.getElementById('maltese-img');
+        const prankZone = document.getElementById('prank-zone');
         const audio = document.getElementById('bark-sound');
+        const searchInput = document.getElementById('search-input');
 
+        // 검색 버튼을 클릭했을 때
         btn.addEventListener('click', function() {
-            // 버튼을 누르면 이미지가 나타납니다.
-            img.style.display = 'block';
-            // 버튼을 누르면 소리가 재생됩니다.
-            audio.play();
-            // 장난 성공 후 버튼 텍스트 변경
-            btn.innerText = "왈왈!!";
+            triggerPrank();
         });
+
+        // 검색창에서 엔터(Enter) 키를 쳤을 때
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                triggerPrank();
+            }
+        });
+
+        function triggerPrank() {
+            // 장난 영역 보이기 & 소리 재생
+            prankZone.style.display = 'block';
+            audio.play();
+        }
     </script>
 
 </body>

@@ -11,11 +11,22 @@
             background-color: #f3f4f6;
             color: #1f2937;
         }
+        
+        /* 왼쪽 상단 로고 스타일 */
+        #site-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            max-width: 150px; /* 로고 크기 조절 */
+            height: auto;
+            z-index: 10;
+        }
+
         /* 상단 배경 이미지 (헤더) */
         .header-bg {
             width: 100%;
             height: 250px;
-            background-color: #d1d5db; /* 실제 배경 이미지를 넣으려면 아래 주석을 푸세요 */
+            background-color: #d1d5db; 
             background-image: url('background.jpg'); 
             background-size: cover;
             background-position: center;
@@ -33,7 +44,7 @@
             height: 150px;
             border-radius: 50%;
             border: 5px solid white;
-            background-color: #9ca3af; /* 실제 프사를 넣으려면 아래 주석을 푸세요 */
+            background-color: #9ca3af; 
             background-image: url('pro.jpg');
             background-size: cover;
             background-position: center;
@@ -122,7 +133,7 @@
             margin-top: 5px;
         }
 
-/* 말티즈 등장 영역 (화면 꽉 차게, 절대 안 잘리게!) */
+        /* 말티즈 등장 영역 (화면 꽉 차게, 절대 안 잘리게!) */
         #prank-zone {
             display: none;
             position: fixed;
@@ -163,6 +174,9 @@
     </style>
 </head>
 <body>
+
+    <!-- 사이트 로고 이미지 -->
+    <img id="site-logo" src="logo.png" alt="사이트 로고">
 
     <div class="header-bg"></div>
 

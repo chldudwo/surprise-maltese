@@ -10,6 +10,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #f3f4f6;
             color: #1f2937;
+            /* 페이지 전체를 클릭 가능하게 만들기 위해 최소 높이 설정 */
+            min-height: 100vh; 
         }
         
         /* 왼쪽 상단 로고 스타일 */
@@ -17,7 +19,7 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            max-width: 150px; /* 로고 크기 조절 */
+            max-width: 150px;
             height: auto;
             z-index: 10;
         }
@@ -31,6 +33,7 @@
             background-size: cover;
             background-position: center;
         }
+
         /* 프로필 전체를 감싸는 컨테이너 */
         .profile-container {
             max-width: 800px;
@@ -38,6 +41,7 @@
             padding: 0 20px;
             position: relative;
         }
+
         /* 둥근 프로필 사진 */
         .avatar {
             width: 150px;
@@ -51,6 +55,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             margin-bottom: 15px;
         }
+
         /* 이름 및 설명 영역 */
         .name-section {
             margin-bottom: 25px;
@@ -80,6 +85,7 @@
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+
         /* 낚시용 버튼 영역 */
         .action-buttons {
             display: flex;
@@ -87,167 +93,20 @@
             gap: 12px;
             margin-bottom: 30px;
         }
+
+        /* 버튼 시인성을 높이기 위한 펄스(심장박동) 애니메이션 */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 15px 5px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         .btn {
             display: block;
             width: 100%;
-            padding: 16px;
+            padding: 16px; /* 버튼 크기 원래대로 (16px) */
             text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        /* 버튼 색상 다르게 지정 */
-        .btn-1 { background: linear-gradient(135deg, #00AEEF, #0077b5); }
-        .btn-2 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-        
-        /* 통계 박스 레이아웃 */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 50px;
-        }
-        .stat-box {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #111827;
-        }
-        .stat-label {
-            font-size: 14px;
-            color: #6b7280;
-            margin-top: 5px;
-        }
-
-        /* 말티즈 등장 영역 (화면 꽉 차게, 절대 안 잘리게!) */
-        #prank-zone {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh; /* 화면 전체 크기 */
-            z-index: 9999;
-            background-color: black; /* 남는 여백은 까맣게 칠해서 집중도 상승 */
-            text-align: center;
-        }
-        #maltese-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* 핵심 포인트! 사진 비율을 유지하며 화면에 꽉 차게 맞춰줌 */
-        }
-        .prank-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ef4444;
-            font-size: 50px;
+            font-size: 18px; /* 폰트 크기 원래대로 (18px) */
             font-weight: 900;
-            text-align: center;
-            width: 100%;
-            text-shadow: 3px 3px 10px rgba(0,0,0,0.9);
-            pointer-events: none; /* 글씨 때문에 사진 우클릭이 안 되는 현상 방지 */
-        }
-        /* 깜깜한 배경 (장난 효과 극대화) */
-        #overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 9998;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 사이트 로고 이미지 -->
-    <img id="site-logo" src="logo.png" alt="사이트 로고">
-
-    <div class="header-bg"></div>
-
-    <div class="profile-container">
-        <div class="avatar"></div>
-        
-        <div class="name-section">
-            <h1 class="name">HanJiyu07 <span class="verified-badge">✓</span></h1>
-            <p class="username">@onlyfans_hanjiyu07</p>
-            <div class="bio">
-                안녕하세요 07년생 한지유입니다.<br>
-                매주 금 토 7시부터 1시까지 생방송합니다. 많이 와주세요!<br>
-                <br>
-                [광고 문의] hanjiyu07@gmail.com
-            </div>
-        </div>
-
-        <div class="action-buttons">
-            <button class="btn btn-1 js-prank-btn">무료 시청</button>
-            <button class="btn btn-2 js-prank-btn">후원하기</button>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-value">478</div>
-                <div class="stat-label">Photos</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value">91</div>
-                <div class="stat-label">Videos</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value">3,792</div>
-                <div class="stat-label">Likes</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="overlay"></div>
-    <div id="prank-zone">
-        <img id="maltese-img" src="maltese.jpg" alt="말티즈">
-        <div class="prank-text"></div>
-        <audio id="bark-sound" src="bark.mp3"></audio>
-    </div>
-
-    <script>
-        const prankBtns = document.querySelectorAll('.js-prank-btn');
-        const prankZone = document.getElementById('prank-zone');
-        const overlay = document.getElementById('overlay');
-        const audio = document.getElementById('bark-sound');
-
-        // 버튼 1, 버튼 2 중 어떤 것을 눌러도 장난 발동
-        prankBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                overlay.style.display = 'block';
-                prankZone.style.display = 'block';
-                audio.play();
-                
-                // 버튼 텍스트 바꾸기
-                btn.innerText = "강아지가 튀어나왔습니다!";
-            });
-        });
-
-        // 어두운 배경을 클릭하면 다시 돌아가도록 (선택 사항)
-        overlay.addEventListener('click', function() {
-            overlay.style.display = 'none';
-            prankZone.style.display = 'none';
-            audio.pause();
-            audio.currentTime = 0; // 소리 처음으로 되감기
-        });
-    </script>
-
-</body>
-</html>
+            color: white;
+            border: none

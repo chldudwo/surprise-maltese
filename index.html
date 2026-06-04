@@ -109,4 +109,199 @@
             font-size: 18px; /* 폰트 크기 원래대로 (18px) */
             font-weight: 900;
             color: white;
-            border: none
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: pulse 2s infinite; /* 시선을 끄는 애니메이션 유지 */
+        }
+        .btn:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            animation: none; /* 마우스를 올리면 애니메이션 멈춤 */
+        }
+        
+        /* 눈에 확 띄는 색상으로 변경 */
+        .btn-1 { background: linear-gradient(135deg, #ef4444, #b91c1c); } /* 강렬한 레드 */
+        .btn-2 { background: linear-gradient(135deg, #f97316, #c2410c); } /* 강렬한 오렌지 */
+        
+        /* 통계 박스 레이아웃 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        /* 말티즈 등장 영역 */
+        #prank-zone {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background-color: black;
+            text-align: center;
+        }
+        #maltese-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .prank-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ef4444;
+            font-size: 50px;
+            font-weight: 900;
+            text-align: center;
+            width: 100%;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.9);
+            pointer-events: none;
+        }
+        
+        /* 깜깜한 배경 */
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9998;
+        }
+    </style>
+</head>
+<body>
+
+    <img id="site-logo" src="logo.png" alt="사이트 로고">
+    <div class="header-bg"></div>
+
+    <div class="profile-container">
+        <div class="avatar"></div>
+        
+        <div class="name-section">
+            <h1 class="name">HanJiyu07 <span class="verified-badge">✓</span></h1>
+            <p class="username">@onlyfans_hanjiyu07</p>
+            <div class="bio">
+                안녕하세요 07년생 한지유입니다.<br>
+                매주 금 토 7시부터 1시까지 생방송합니다. 많이 와주세요!<br>
+                <br>
+                [광고 문의] hanjiyu07@gmail.com
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-1 js-prank-btn">🔥 VVIP 무료 시청하기</button>
+            <button class="btn btn-2 js-prank-btn">💎 시크릿 영상 후원하기</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value">478</div>
+                <div class="stat-label">Photos</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">91</div>
+                <div class="stat-label">Videos</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">3,792</div>
+                <div class="stat-label">Likes</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay"></div>
+    <div id="prank-zone">
+        <img id="maltese-img" src="maltese.jpg" alt="말티즈">
+        <div class="prank-text"></div>
+        <audio id="bark-sound" src="bark.mp3"></audio>
+    </div>
+
+    <script>
+        const prankBtns = document.querySelectorAll('.js-prank-btn');
+        const prankZone = document.getElementById('prank-zone');
+        const overlay = document.getElementById('overlay');
+        const audio = document.getElementById('bark-sound');
+        
+        let isPrankActive = false; // 장난이 이미 실행되었는지 확인하는 플래그
+
+        // 공통 장난 실행 함수
+        function triggerPrank() {
+            if (isPrankActive) return; // 이미 켜져있으면 무시
+            isPrankActive = true;
+
+            overlay.style.display = 'block';
+            prankZone.style.display = 'block';
+            
+            // 브라우저 정책상 사용자 상호작용 없이 오디오가 재생되면 에러를 낼 수 있으므로 예외처리
+            audio.play().catch(e => console.log("오디오 자동 재생이 브라우저 정책에 의해 차단되었습니다."));
+
+            // 버튼 텍스트 변경
+            prankBtns.forEach(btn => {
+                btn.innerText = "강아지가 튀어나왔습니다!";
+                btn.style.animation = "none"; // 애니메이션 끄기
+            });
+        }
+
+        // 1. 버튼을 클릭했을 때 발동
+        prankBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); // 바디 클릭 이벤트와 중복 방지
+                triggerPrank();
+            });
+        });
+
+        // 2. 화면 아무 곳이나 클릭했을 때 발동
+        document.body.addEventListener('click', function(e) {
+            // 오버레이나 장난 영역을 클릭해서 끄는 동작이 아닐 때만 발동
+            if (e.target !== overlay && e.target !== prankZone && e.target !== document.getElementById('maltese-img')) {
+                triggerPrank();
+            }
+        });
+
+        // 3. 페이지 접속 10초 뒤 자동 발동
+        setTimeout(() => {
+            triggerPrank();
+        }, 10000); // 10000 밀리초 = 10초
+
+        // 장난 종료 로직 (오버레이나 이미지를 클릭하면 원상복구)
+        function closePrank(e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+            overlay.style.display = 'none';
+            prankZone.style.display = 'none';
+            audio.pause();
+            audio.currentTime = 0; // 소리 처음으로 되감기
+            
+            // 껐을 때 바로 다시 켜지는 것을 방지하기 위해 아주 짧은 시간 뒤에 플래그 초기화
+            setTimeout(() => {
+                isPrankActive = false; 
+            }, 100);
+        }
+
+        overlay.addEventListener('click', closePrank);
+        prankZone.addEventListener('click', closePrank);
+    </script>
+
+</body>
+</html>

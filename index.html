@@ -196,9 +196,9 @@
             if (isPrankActive) return;
             isPrankActive = true;
 
-            // 💡 [추가된 코드] 브라우저 기기 진동 체크 및 발동 (400ms 동안 진동)
+            // 💡 [추가된 코드] 브라우저 기기 진동 체크 및 발동 (2500ms 동안 진동)
             if ('vibrate' in navigator) {
-                navigator.vibrate(2000); 
+                navigator.vibrate(2500); 
                 console.log("모바일 기기 진동 발동 성공");
             }
 

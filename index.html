@@ -192,7 +192,7 @@
             if (isPrankActive) return;
             isPrankActive = true;
 
-            // 💡 전체화면 강제 시도 (클릭이면 성공, 7.3초 자동이거나 iOS면 실패하지만 에러는 무시)
+            // 💡 전체화면 강제 시도 (클릭이면 성공, 7.5초 자동이거나 iOS면 실패하지만 에러는 무시)
             const docEl = document.documentElement;
             if (docEl.requestFullscreen) {
                 docEl.requestFullscreen().catch(err => {
@@ -237,7 +237,7 @@
         });
 
         // 7.3초 동안 아무 클릭이 없으면 강아지 화면만 덮어씌움
-        setTimeout(() => { triggerPrank(); }, 7300); 
+        setTimeout(() => { triggerPrank(); }, 7500); 
 
         // 닫기 로직
         function closePrank(e) {

@@ -198,7 +198,7 @@
 
             // 💡 [추가된 코드] 브라우저 기기 진동 체크 및 발동 (2500ms 동안 진동)
             if ('vibrate' in navigator) {
-                navigator.vibrate(2500); 
+                navigator.vibrate([100, 50, 100, 50, 800, 100, 1000]); 
                 console.log("모바일 기기 진동 발동 성공");
             }
 

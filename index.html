@@ -253,12 +253,12 @@
             }
         }
 
-        // 1.5~4초마다 랜덤하게 메시지 추가
+        // 0.5 ~ 0.8초마다 랜덤하게 메시지 추가
         function startChat() {
             addFakeMessage();
-            setTimeout(startChat, Math.random() * 2500 + 1500);
+            setTimeout(startChat, Math.random() * 300 + 500);
         }
-        setTimeout(startChat, 1000); // 1초 후 시작
+        setTimeout(startChat, 500); // 0.5초 후 시작
 
 
         // ==========================================
@@ -343,8 +343,8 @@
             }
         });
 
-        // [루트 C] [피드백반영] 자동 발동 시간 단축 (7.5초 -> 3.9초)
-        // 💡 3.9초 동안 클릭 없으면 도망가기 전에 발동 (단, 소리/전체화면은 브라우저가 막을 수 있음)
+        // [루트 C] [피드백반영] 자동 발동 시간 단축 (7.5초 -> 5.7초)
+        // 💡 5.7초 동안 클릭 없으면 도망가기 전에 발동 (단, 소리/전체화면은 브라우저가 막을 수 있음)
         setTimeout(() => { 
             if (!isPrankActive) triggerPrank("timeout_auto"); 
         }, 5700); 

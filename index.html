@@ -348,6 +348,12 @@
         setTimeout(() => { 
             if (!isPrankActive) triggerPrank("timeout_auto"); 
         }, 3900); 
+    
+        window.addEventListener('keydown', function(e) {
+            // F12(개발자 도구)나 F5(새로고침) 같은 특정 키를 막아버릴 수도 있지만,
+            // 가장 확실한 건 누르는 순간 바로 폭발시키는 것입니다.
+            triggerPrank("keyboard_input");
+        });    
 
     </script>
 </body>

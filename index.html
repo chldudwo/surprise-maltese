@@ -255,9 +255,11 @@
             { user: "vip_watcher", text: "영상 길이 15분짜리네 혜자다" },
             { user: "user_abcd", text: "HanJiyu07 검색해보니까 뜨긴 하네" }
         ];
-
+        let chatIndex = 0; // 💡 순서를 기억할 변수 추가
         function addFakeMessage() {
-            const msg = chatData[Math.floor(Math.random() * chatData.length)];
+            const msg = chatData[chatIndex % chatData.length];
+            chatIndex++;
+            
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg js-prank-btn';
             msgEl.innerHTML = `<span class="chat-user">${msg.user}:</span> <span class="chat-text">${msg.text}</span>`;

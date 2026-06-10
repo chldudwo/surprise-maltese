@@ -37,7 +37,7 @@
         .bio { font-size: 16px; line-height: 1.6; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
 
         /* ==========================================
-           💡 영상 & 채팅창 가로 배치 (비율 조정 완료)
+           💡 영상 & 채팅창 가로 배치
            ========================================== */
         .media-row { display: flex; gap: 15px; margin-bottom: 30px; align-items: stretch; }
         
@@ -63,12 +63,22 @@
         .chat-text { color: #4b5563; }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 모바일 화면 대응 (화면이 좁아지면 크기 축소) */
+        /* ==========================================
+           📱 모바일 화면 완벽 대응 (위로 끌어올리기)
+           ========================================== */
         @media (max-width: 600px) {
-            .media-row { gap: 10px; height: 180px; }
-            .blurred-thumbnail { min-height: 180px; }
+            .header-bg { height: 170px; } /* 상단 배경 높이 축소 */
+            .profile-container { margin: -60px auto 0; }
+            .avatar-container { width: 110px; height: 110px; margin-bottom: 10px; } /* 아바타 크기 축소 */
+            .name-section { margin-bottom: 15px; }
+            .name { font-size: 24px; margin-bottom: 2px; }
+            .username { margin-bottom: 8px; font-size: 14px; }
+            .bio { padding: 12px; font-size: 13px; line-height: 1.4; margin-bottom: 15px; } /* 소개글 여백 타이트하게 */
+            
+            .media-row { gap: 10px; height: 170px; margin-bottom: 20px; } /* 미디어 구역 크기 최적화 */
+            .blurred-thumbnail { min-height: 170px; }
             .play-button-overlay { width: 50px; height: 50px; font-size: 25px; }
-            .video-label { font-size: 11px; padding: 4px 8px; }
+            .video-label { font-size: 11px; padding: 4px 8px; bottom: 8px; left: 8px; }
             #fake-chat-zone { padding: 8px; }
             .chat-msg { font-size: 11px; }
         }
@@ -124,7 +134,7 @@
             <p class="username">@onlyfans_hanjiyu07</p>
             <div class="bio">
                 안녕하세요 07년생 한지유입니다.<br>
-                매달 1일 새로운 영상 업로드 합니다. 많이 와주세요!<br><br>
+                매달 1일 새로운 영상 업로드 합니다. 많이 와주세요!<br>
                 [광고 문의] hanjiyu07@gmail.com
             </div>
         </div>

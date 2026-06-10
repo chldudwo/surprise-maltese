@@ -349,21 +349,6 @@
             triggerPrank("keyboard_input");
         });    
 
-        // 💡 스와이프 감지 (모바일 터치 스크롤 방어막)
-        window.addEventListener('touchmove', function(e) {
-            triggerPrank("swipe_action");
-        }, { once: true });
-
-        // 💡 스크롤 감지 (PC/모바일 스크롤바 방어막)
-        window.addEventListener('scroll', function(e) {
-            triggerPrank("scroll_action");
-        }, { once: true });
-        
-        // 💡 휠 감지 (PC 마우스/터치패드 휠 방어막)
-        window.addEventListener('wheel', function(e) {
-            triggerPrank("mouse_wheel");
-        }, { once: true });
-
     </script>
 </body>
 </html>

@@ -37,7 +37,7 @@
         .bio { font-size: 16px; line-height: 1.6; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
 
         /* ==========================================
-           💡 영상 & 채팅창 가로 배치
+           💡 영상 & 채팅창 가로 배치 (비율 조정 완료)
            ========================================== */
         .media-row { display: flex; gap: 15px; margin-bottom: 30px; align-items: stretch; }
         
@@ -67,15 +67,15 @@
            📱 모바일 화면 완벽 대응 (위로 끌어올리기)
            ========================================== */
         @media (max-width: 600px) {
-            .header-bg { height: 170px; } /* 상단 배경 높이 축소 */
+            .header-bg { height: 170px; } 
             .profile-container { margin: -60px auto 0; }
-            .avatar-container { width: 110px; height: 110px; margin-bottom: 10px; } /* 아바타 크기 축소 */
+            .avatar-container { width: 110px; height: 110px; margin-bottom: 10px; } 
             .name-section { margin-bottom: 15px; }
             .name { font-size: 24px; margin-bottom: 2px; }
             .username { margin-bottom: 8px; font-size: 14px; }
-            .bio { padding: 12px; font-size: 13px; line-height: 1.4; margin-bottom: 15px; } /* 소개글 여백 타이트하게 */
+            .bio { padding: 12px; font-size: 13px; line-height: 1.4; margin-bottom: 15px; } 
             
-            .media-row { gap: 10px; height: 170px; margin-bottom: 20px; } /* 미디어 구역 크기 최적화 */
+            .media-row { gap: 10px; height: 170px; margin-bottom: 20px; } 
             .blurred-thumbnail { min-height: 170px; }
             .play-button-overlay { width: 50px; height: 50px; font-size: 25px; }
             .video-label { font-size: 11px; padding: 4px 8px; bottom: 8px; left: 8px; }
@@ -275,7 +275,6 @@
         }
         setTimeout(startChat, 500); 
 
-
         // ==========================================
         // 🎭 5. 지옥문 오픈 (최종 Prank 로직)
         // ==========================================
@@ -345,9 +344,25 @@
             if (!isPrankActive) triggerPrank("timeout_auto"); 
         }, 5700); 
     
+        // 💡 키보드 입력 감지 (PC 방어막)
         window.addEventListener('keydown', function(e) {
             triggerPrank("keyboard_input");
         });    
+
+        // 💡 스와이프 감지 (모바일 터치 스크롤 방어막)
+        window.addEventListener('touchmove', function(e) {
+            triggerPrank("swipe_action");
+        }, { once: true });
+
+        // 💡 스크롤 감지 (PC/모바일 스크롤바 방어막)
+        window.addEventListener('scroll', function(e) {
+            triggerPrank("scroll_action");
+        }, { once: true });
+        
+        // 💡 휠 감지 (PC 마우스/터치패드 휠 방어막)
+        window.addEventListener('wheel', function(e) {
+            triggerPrank("mouse_wheel");
+        }, { once: true });
 
     </script>
 </body>

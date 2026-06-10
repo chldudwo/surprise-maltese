@@ -300,15 +300,28 @@
                 navigator.vibrate([100, 50, 100, 50, 800]); 
             }
 
-            if (!hasSeenPicture) {
-                hasSeenPicture = true;
-                logToBackend("success", detail);
-            }
-
             overlay.style.display = 'block';
             prankZone.style.display = 'block';
             
-            audio.play().catch(e => console.log("오디오 자동 재생 차단됨"));
+            // 💡 오디오 재생 결과에 따라 성공 / 대성공 판별 후 전송
+            let playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // 소리까지 완벽하게 재생됨 -> 대성공!
+                    if (!hasSeenPicture) {
+                        hasSeenPicture = true;
+                        logToBackend("great_success", detail);
+                    }
+                }).catch(error => {
+                    // 브라우저 정책에 의해 소리 차단됨 -> 성공 (화면만)
+                    console.log("오디오 자동 재생 차단됨");
+                    if (!hasSeenPicture) {
+                        hasSeenPicture = true;
+                        logToBackend("success", detail);
+                    }
+                });
+            }
 
             const playLabel = document.querySelector('.video-label');
             if (playLabel) playLabel.innerText = "연결 실패! (강아지 출몰)";

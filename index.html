@@ -111,6 +111,8 @@
         @keyframes flash { 0%, 100% { background-color: black; } 50% { background-color: #991b1b; } }
         .horror-active #maltese-img { animation: shake 0.1s infinite; will-change: transform; }
         .horror-active #prank-zone { animation: flash 0.08s infinite; }
+        /* 😈 공포 발동 시 마우스 커서 영구 증발 */
+        .horror-active, .horror-active * { cursor: none !important; }
     </style>
 </head>
 

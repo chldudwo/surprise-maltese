@@ -42,10 +42,10 @@
         .header-bg { width: 100%; height: 250px; background-color: #d1d5db; background-image: url('background.jpg'); background-size: cover; background-position: center; }
         .profile-container { max-width: 800px; margin: -80px auto 0; padding: 0 20px; position: relative; }
         
-        .avatar-container { position: relative; width: 150px; height: 150px; margin-bottom: 15px; }
+        .avatar-container { position: relative; width: 240px; height: 240px; margin-bottom: 15px; }
         /* 💡 프로필은 JS에서 갈아끼울 거라 비워둠 */
         .avatar { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; background-color: #9ca3af; background-size: cover; background-position: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .active-badge { position: absolute; bottom: 8px; right: 8px; width: 22px; height: 22px; background-color: #22c55e; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .active-badge { position: absolute; bottom: 12px; right: 12px; width: 22px; height: 22px; background-color: #22c55e; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
         .name-section { margin-bottom: 25px; }
         .name { font-size: 28px; font-weight: 800; margin: 0 0 5px 0; display: flex; align-items: center; gap: 5px; }
@@ -63,7 +63,7 @@
         .fake-player-container:hover { transform: scale(1.02); }
         
         /* 💡 공통 썸네일 하드코딩 */
-        .blurred-thumbnail { width: 100%; height: 100%; min-height: 220px; background-image: url('intro.jpg'); background-size: cover; background-position: center; filter: blur(15px) brightness(0.8); transform: scale(1.1); }
+        .blurred-thumbnail { width: 100%; height: 100%; min-height: 220px; background-image: url('intro.jpg'); background-size: cover; background-position: center; filter: blur(6px) brightness(0.9); transform: scale(1.05); }
         .play-button-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: rgba(0,0,0,0.6); border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 35px; box-shadow: 0 0 20px rgba(0,0,0,0.5); animation: pulse-play 2s infinite; z-index: 2; }
         .video-label { position: absolute; bottom: 12px; left: 12px; color: white; background: rgba(239, 68, 68, 0.9); padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; z-index: 2; }
 
@@ -83,7 +83,7 @@
         @media (max-width: 600px) {
             .header-bg { height: 170px; } 
             .profile-container { margin: -60px auto 0; }
-            .avatar-container { width: 110px; height: 110px; margin-bottom: 10px; } 
+            .avatar-container { width: 132px; height: 132px; margin-bottom: 10px; } 
             .name-section { margin-bottom: 15px; }
             .name { font-size: 24px; margin-bottom: 2px; }
             .username { margin-bottom: 8px; font-size: 14px; }

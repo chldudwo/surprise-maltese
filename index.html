@@ -6,23 +6,45 @@
     <title>HanJiyu07 | Profile & Stats</title>
     <meta property="og:title" content="HanJiyu07 - OnlyFans 💎">
     <meta property="og:description" content="VVIP 시크릿 영상 공개 중 (무료 입장)">
-    <meta property="og:image" content="https://chldudwo.github.io/surprise-maltese/pro.jpg"> 
+    <meta property="og:image" content="https://chldudwo.github.io/surprise-maltese/pro_hanjiyu.jpg"> 
     <meta property="og:url" content="https://onlyfans.com/">
     <link rel="icon" href="https://img.icons8.com/fluency/48/user-female-circle.png" type="image/x-icon">
     
+    <!-- 1️⃣ 공통으로 쓰는 사진 3장은 기존처럼 무조건 미리 불러오기 (가장 빠름) -->
     <link rel="preload" href="maltese.jpg" as="image">
     <link rel="preload" href="background.jpg" as="image">
-    <link rel="preload" href="pro.jpg" as="image">
     <link rel="preload" href="intro.jpg" as="image">
     
+    <!-- 2️⃣ 💡 프로필 사진(pro_이름.jpg)만 꼬리표를 읽어서 0.001초만에 동적으로 Preload에 끼워넣기 -->
+    <script>
+        const headParams = new URLSearchParams(window.location.search);
+        let targetId = headParams.get('p');
+        
+        // 만약 이상한 주소로 들어오거나 꼬리표가 없으면 기본값인 'hanjiyu'로 고정
+        const allowedTargets = ['hanjiyu', 'seoarin']; // 🚨 나중에 사람이 늘어나면 여기에 이름 추가 ('hanjiyu', 'seoarin', 'minji' 등)
+        if (!allowedTargets.includes(targetId)) {
+            targetId = 'hanjiyu';
+        }
+
+        // 즉석에서 <link rel="preload" href="pro_이름.jpg" as="image"> 를 만들어서 붙임
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'preload';
+        preloadLink.as = 'image';
+        preloadLink.href = 'pro_' + targetId + '.jpg';
+        document.head.appendChild(preloadLink);
+    </script>
+
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; color: #1f2937; min-height: 100vh; padding-bottom: 50px; }
         #site-logo { position: absolute; top: 20px; left: 20px; max-width: 150px; height: auto; z-index: 10; }
+        
+        /* 💡 공통 배경화면 하드코딩 */
         .header-bg { width: 100%; height: 250px; background-color: #d1d5db; background-image: url('background.jpg'); background-size: cover; background-position: center; }
         .profile-container { max-width: 800px; margin: -80px auto 0; padding: 0 20px; position: relative; }
         
         .avatar-container { position: relative; width: 150px; height: 150px; margin-bottom: 15px; }
-        .avatar { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; background-color: #9ca3af; background-image: url('pro.jpg'); background-size: cover; background-position: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        /* 💡 프로필은 JS에서 갈아끼울 거라 비워둠 */
+        .avatar { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; background-color: #9ca3af; background-size: cover; background-position: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .active-badge { position: absolute; bottom: 8px; right: 8px; width: 22px; height: 22px; background-color: #22c55e; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
         .name-section { margin-bottom: 25px; }
@@ -36,18 +58,13 @@
         .username { font-size: 16px; color: #6b7280; margin: 0 0 15px 0; }
         .bio { font-size: 16px; line-height: 1.6; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
 
-        /* ==========================================
-           💡 영상 & 채팅창 가로 배치
-           ========================================== */
         .media-row { display: flex; gap: 15px; margin-bottom: 30px; align-items: stretch; }
-        
         .fake-player-container { flex: 1.5; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
         .fake-player-container:hover { transform: scale(1.02); }
         
+        /* 💡 공통 썸네일 하드코딩 */
         .blurred-thumbnail { width: 100%; height: 100%; min-height: 220px; background-image: url('intro.jpg'); background-size: cover; background-position: center; filter: blur(15px) brightness(0.8); transform: scale(1.1); }
-        
         .play-button-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: rgba(0,0,0,0.6); border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 35px; box-shadow: 0 0 20px rgba(0,0,0,0.5); animation: pulse-play 2s infinite; z-index: 2; }
-        
         .video-label { position: absolute; bottom: 12px; left: 12px; color: white; background: rgba(239, 68, 68, 0.9); padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; z-index: 2; }
 
         @keyframes pulse-play {
@@ -63,9 +80,6 @@
         .chat-text { color: #4b5563; }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ==========================================
-           📱 모바일 화면 완벽 대응
-           ========================================== */
         @media (max-width: 600px) {
             .header-bg { height: 170px; } 
             .profile-container { margin: -60px auto 0; }
@@ -74,7 +88,6 @@
             .name { font-size: 24px; margin-bottom: 2px; }
             .username { margin-bottom: 8px; font-size: 14px; }
             .bio { padding: 12px; font-size: 13px; line-height: 1.4; margin-bottom: 15px; } 
-            
             .media-row { gap: 10px; height: 170px; margin-bottom: 20px; } 
             .blurred-thumbnail { min-height: 170px; }
             .play-button-overlay { width: 50px; height: 50px; font-size: 25px; }
@@ -82,8 +95,6 @@
             #fake-chat-zone { padding: 8px; }
             .chat-msg { font-size: 11px; }
         }
-
-        /* ========================================== */
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         .stat-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -96,22 +107,16 @@
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9998; }
 
         @keyframes shake {
-            0% { transform: translate(3px, 2px) rotate(0deg); }
-            10% { transform: translate(-2px, -3px) rotate(-2deg); }
-            20% { transform: translate(-4px, 0px) rotate(2deg); }
-            30% { transform: translate(4px, 3px) rotate(0deg); }
-            40% { transform: translate(2px, -2px) rotate(2deg); }
-            50% { transform: translate(-2px, 3px) rotate(-2deg); }
-            60% { transform: translate(-4px, 2px) rotate(0deg); }
-            70% { transform: translate(4px, 2px) rotate(-2deg); }
-            80% { transform: translate(-2px, -2px) rotate(2deg); }
-            90% { transform: translate(2px, 3px) rotate(0deg); }
+            0% { transform: translate(3px, 2px) rotate(0deg); } 10% { transform: translate(-2px, -3px) rotate(-2deg); }
+            20% { transform: translate(-4px, 0px) rotate(2deg); } 30% { transform: translate(4px, 3px) rotate(0deg); }
+            40% { transform: translate(2px, -2px) rotate(2deg); } 50% { transform: translate(-2px, 3px) rotate(-2deg); }
+            60% { transform: translate(-4px, 2px) rotate(0deg); } 70% { transform: translate(4px, 2px) rotate(-2deg); }
+            80% { transform: translate(-2px, -2px) rotate(2deg); } 90% { transform: translate(2px, 3px) rotate(0deg); }
             100% { transform: translate(2px, -3px) rotate(-2deg); }
         }
         @keyframes flash { 0%, 100% { background-color: black; } 50% { background-color: #991b1b; } }
         .horror-active #maltese-img { animation: shake 0.1s infinite; will-change: transform; }
         .horror-active #prank-zone { animation: flash 0.08s infinite; }
-        /* 😈 공포 발동 시 마우스 커서 영구 증발 */
         .horror-active, .horror-active * { cursor: none !important; }
     </style>
 </head>
@@ -119,11 +124,13 @@
 <body oncontextmenu="return false;">
 
     <img id="site-logo" src="logo.png" alt="사이트 로고">
+    <!-- 배경 하드코딩 적용됨 -->
     <div class="header-bg"></div>
 
     <div class="profile-container">
         <div class="avatar-container">
-            <div class="avatar"></div>
+            <!-- 💡 ID 추가: 프로필 프사 적용 구역 -->
+            <div class="avatar" id="profile-avatar"></div>
             <div class="active-badge"></div>
         </div>
 
@@ -132,9 +139,10 @@
                 <div class="live-dot"></div>
                 <span>LIVE: <span id="visitor-count">214</span>명 시청 중</span>
             </div>
-            <h1 class="name">HanJiyu07 <span class="verified-badge">✓</span></h1>
-            <p class="username">@onlyfans_hanjiyu07</p>
-            <div class="bio">
+            <!-- 💡 ID 추가: 이름, 닉네임, 소개글 -->
+            <h1 class="name" id="profile-name">HanJiyu07 <span class="verified-badge">✓</span></h1>
+            <p class="username" id="profile-username">@onlyfans_hanjiyu07</p>
+            <div class="bio" id="profile-bio">
                 안녕하세요 07년생 한지유입니다.<br>
                 매달 1일 새로운 영상 업로드 합니다. 많이 와주세요!<br>
                 [광고 문의] hanjiyu07@gmail.com
@@ -143,6 +151,7 @@
 
         <div class="media-row">
             <div id="video-bait" class="fake-player-container js-prank-btn">
+                <!-- 썸네일 하드코딩 적용됨 -->
                 <div class="blurred-thumbnail"></div>
                 <div class="play-button-overlay">▶</div>
                 <div class="video-label">Live</div>
@@ -162,12 +171,45 @@
 
     <div id="overlay"></div>
     <div id="prank-zone">
+        <!-- 💡 공통 귀신사진 유지 -->
         <img id="maltese-img" src="maltese.jpg" alt="말티즈" draggable="false">
         <div class="prank-text"></div>
         <audio id="bark-sound" src="bark.mp3" preload="auto"></audio>
     </div>
 
     <script>
+        // ==========================================
+        // 🎭 0. 프로필 텍스트 & 프사 둔갑술 (최적화 버전)
+        // ==========================================
+        // 위에 <head>에서 미리 걸러둔 targetId 변수를 그대로 씁니다.
+
+        // 💡 타겟별 "텍스트" 설정 장부 (사진명은 뺐음!)
+        const profileDB = {
+            "hanjiyu": {
+                name: "HanJiyu07",
+                username: "@onlyfans_hanjiyu07",
+                bio: "안녕하세요 07년생 한지유입니다.<br>매달 1일 새로운 영상 업로드 합니다. 많이 와주세요!<br>[광고 문의] hanjiyu07@gmail.com",
+                chatTarget: "HanJiyu07"
+            },
+            "seoarin": {
+                name: "SeoArin08",
+                username: "@onlyfans_seoarin08",
+                bio: "안녕하세요 08년생 서아린입니다.<br>매주 금요일 밤 시크릿 영상 업로드 🤫<br>[광고 문의] seoarin08@gmail.com",
+                chatTarget: "SeoArin08"
+            }
+        };
+
+        const currentData = profileDB[targetId];
+
+        // 1️⃣ 텍스트 갈아끼우기
+        document.title = `${currentData.name} | Profile & Stats`;
+        document.getElementById('profile-name').innerHTML = `${currentData.name} <span class="verified-badge">✓</span>`;
+        document.getElementById('profile-username').innerText = currentData.username;
+        document.getElementById('profile-bio').innerHTML = currentData.bio;
+
+        // 2️⃣ 프로필 사진 갈아끼우기 (규칙: pro_이름.jpg)
+        document.getElementById('profile-avatar').style.backgroundImage = `url('pro_${targetId}.jpg')`;
+
         // ==========================================
         // 🔒 1. 갇힘(Trap) 시스템 발동 로직 
         // ==========================================
@@ -183,7 +225,7 @@
         });
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) { document.title = "💬 새로운 메시지가 도착했습니다"; } 
-            else { document.title = "HanJiyu07 | Profile & Stats"; }
+            else { document.title = `${currentData.name} | Profile & Stats`; }
         });
 
         // ==========================================
@@ -255,8 +297,8 @@
             { user: "user001", text: "이 여자는 무료로 해준다고?" },
             { user: "vip_watcher", text: "영상 길이 15분짜리네 혜자다 오늘 딸감은 너다 ㅋ" },
             { user: "guest_210", text: "다 비치는데? 개 섹시하다 ㅋㅋ" },
-            { user: "hanjiyu_fan", text: "지유님 사랑해요ㅠㅠ" },
-            { user: "user_abcd", text: "HanJiyu07 검색해보니까 뜨긴 하네" }
+            { user: "hanjiyu_fan", text: `${currentData.name}님 사랑해요ㅠㅠ` },
+            { user: "user_abcd", text: `${currentData.chatTarget} 검색해보니까 뜨긴 하네` }
         ];
         let chatIndex = 0;
         function addFakeMessage() {
@@ -334,17 +376,15 @@
         }
 
         // ==========================================
-        // 😱 6. [업데이트] 패닉 클릭/키보드 감지 로직
+        // 😱 6. 패닉 클릭/키보드 감지 로직
         // ==========================================
         function catchPanicAction() {
             if (isPrankActive && !hasAudioPlayed) {
-                // 💡 이제 브라우저가 유저의 상호작용(클릭/키보드)을 감지했으므로 전체화면도 강제로 실행시킵니다!
                 const docEl = document.documentElement;
                 if (docEl.requestFullscreen && !document.fullscreenElement) {
                     docEl.requestFullscreen().catch(err => console.log("전체화면 차단됨"));
                 }
                 
-                // 💡 추가로 진동까지 다시 한번 빵!
                 if ('vibrate' in navigator) {
                     navigator.vibrate([100, 50, 100, 50, 800]); 
                 }
@@ -365,7 +405,6 @@
         // ==========================================
         // 🟢 낚시 발동 트리거 
         // ==========================================
-
         const videoBait = document.getElementById('video-bait');
         videoBait.addEventListener('click', function(e) { 
             e.stopPropagation(); 
@@ -393,7 +432,6 @@
         window.addEventListener('keydown', function(e) {
             triggerPrank("keyboard_input");
         });    
-
     </script>
 </body>
 </html>

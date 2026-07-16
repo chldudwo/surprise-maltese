@@ -40,7 +40,13 @@
         
         /* 💡 공통 배경화면 하드코딩 */
         .header-bg { width: 100%; height: 250px; background-color: #d1d5db; background-image: url('background.jpg'); background-size: cover; background-position: center; }
-        .profile-container { max-width: 800px; margin: -80px auto 0; padding: 0 20px; position: relative; }
+        /* 1. 기본 설정 (모바일용 - 기존 -60px 유지) */
+        .profile-container { max-width: 800px; margin: -60px auto 0; padding: 0 20px; position: relative; }
+
+        /* 2. PC 화면일 때만 -140px로 수정 */
+        @media (min-width: 601px) {
+            .profile-container { margin: -140px auto 0; }
+        }
         
         .avatar-container { position: relative; width: 240px; height: 240px; margin-bottom: 15px; }
         /* 💡 프로필은 JS에서 갈아끼울 거라 비워둠 */

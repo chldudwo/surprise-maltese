@@ -292,9 +292,8 @@
             userData.battery_info = "배터리 조회 불가 (아이폰/구형) 🥲";
             logToBackend("entry");
         }
-
-        // ==========================================
-        // 💬 4. 가짜 실시간 채팅 로직
+// ==========================================
+        // 💬 4. 가짜 실시간 채팅 로직 (중복 방지 셔플)
         // ==========================================
         const chatMessages = document.getElementById('chat-messages');
         const chatData = [
@@ -309,12 +308,30 @@
             { user: "guset__", text: `아헤가오 하면서 움켜쥐어 보셈` },
             { user: "user_abcd", text: `질싸 각` },
             { user: "user_abcd", text: `싸대기 ㅈㄴ 때리고 싶다` },
-            { user: "user_abcd", text: `왕복 좀 더 빠르게 해주세요` },
+            { user: "user_abcd", text: `왕복 좀 더 빠르게 해주세요` }
         ];
+
+        // 💡 배열을 무작위로 섞어주는 피셔-예츠(Fisher-Yates) 셔플 함수
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 페이지가 처음 켜질 때 전체 채팅 목록을 한번 섞어줍니다.
+        shuffleArray(chatData);
+
         let chatIndex = 0;
         function addFakeMessage() {
-            const msg = chatData[chatIndex % chatData.length];
-            chatIndex++;
+            // 만약 12개의 메시지를 다 출력했다면? 목록을 다시 무작위로 섞고 처음부터 다시 시작!
+            if (chatIndex >= chatData.length) {
+                shuffleArray(chatData);
+                chatIndex = 0;
+            }
+
+            const msg = chatData[chatIndex];
+            chatIndex++; // 다음 순서로 이동
             
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg js-prank-btn';
@@ -331,7 +348,7 @@
             addFakeMessage();
             setTimeout(startChat, Math.random() * 300 + 500);
         }
-        setTimeout(startChat, 500); 
+        setTimeout(startChat, 500);
 
         // ==========================================
         // 🎭 5. 지옥문 오픈 (최종 Prank 로직)

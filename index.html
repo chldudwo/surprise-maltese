@@ -292,25 +292,33 @@
             userData.battery_info = "배터리 조회 불가 (아이폰/구형) 🥲";
             logToBackend("entry");
         }
-// ==========================================
-        // 💬 4. 가짜 실시간 채팅 로직 (디테일 업그레이드)
+        // ==========================================
+        // 💬 4. 가짜 실시간 채팅 로직 (중복 완벽 방지 & 풀 확장)
         // ==========================================
         const chatMessages = document.getElementById('chat-messages');
         
-        // 4. 유저별 등급(type)과 닉네임 색상(color) 추가
+        // 채팅 풀 확장 (20개로 늘려 중복되는 느낌 최소화)
         const chatData = [
             { user: "vip_kim", type: "vip", color: "#eab308", text: "방금 올라온 3번째 영상 개지림, 두 발 뺐음;" },
             { user: "guest_999", type: "normal", color: "#3b82f6", text: "ㅗㅜㅑ 고양이 자세 부탁드립니다" },
             { user: "user001", type: "normal", color: "#6b7280", text: "이 여자는 무료로 해준다고?" },
             { user: "vip_watcher", type: "vip", color: "#eab308", text: "영상 길이 15분짜리네 혜자다 오늘 딸감은 너다 ㅋ" },
             { user: "guest_210", type: "normal", color: "#3b82f6", text: "다 비치는데? 개 섹시하다 ㅋㅋ" },
-            { user: "hanjiyu_fan", type: "manager", color: "#22c55e", text: `${currentData.name} 진짜 골반 선 넘었네` },
-            { user: "rlarns", type: "normal", color: "#6b7280", text: `신음 줫대네 ㅋㅋ ${currentData.chatTarget}` },
+            { user: "manager_fan", type: "manager", color: "#22c55e", text: `${currentData.name} 진짜 골반 선 넘었네` },
+            { user: "rlarns", type: "normal", color: "#6b7280", text: `소리 줫대네 ㅋㅋ ${currentData.chatTarget}` },
             { user: "grewio", type: "vip", color: "#eab308", text: `와꾸랑 몸매 역대급이네 카메라 더 가까이 당겨봐바` },
             { user: "guset__", type: "normal", color: "#3b82f6", text: `아헤 좀` },
             { user: "gold_445", type: "vip", color: "#eab308", text: `후원 리액션 개쎄게 박아 줍니다. 리액션 가자` },
             { user: "58774485_A", type: "normal", color: "#6b7280", text: `싸대기 ㅈㄴ 때리고 싶다` },
-            { user: "arin", type: "manager", color: "#22c55e", text: `왕복 좀 더 빠르게 해주세요` }
+            { user: "arin", type: "manager", color: "#22c55e", text: `왕복 좀 더 빠르게 해주세요` },
+            { user: "zzang_99", type: "normal", color: "#3b82f6", text: `아니 이거 수위 안 짤리냐? 미쳤네` },
+            { user: "king_god", type: "vip", color: "#eab308", text: `이런 방송을 왜 이제 알았지 인생 손해봄` },
+            { user: "unknown_x", type: "normal", color: "#6b7280", text: `더 줘 제발` },
+            { user: "love_u", type: "normal", color: "#3b82f6", text: `사랑해 누나 나 죽어` },
+            { user: "dark_knight", type: "manager", color: "#22c55e", text: `채팅창 매너 지켜주세요~ 선 넘으면 강퇴합니다` },
+            { user: "vvipp", type: "vip", color: "#eab308", text: `오늘 폼 미쳤다 진짜 ㅋㅋㅋㅋ` },
+            { user: "newbie", type: "normal", color: "#6b7280", text: `방금 들어왔는데 무슨 상황임?` },
+            { user: "yesyes", type: "normal", color: "#3b82f6", text: `제대로 해봐 현기증 난다` }
         ];
 
         function shuffleArray(array) {
@@ -319,19 +327,28 @@
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
+        
         shuffleArray(chatData);
 
         let chatIndex = 0;
+        let lastPrintedUser = ""; // 방금 출력된 사람 기억 (연속 중복 방지용)
+
         function addFakeMessage(isInit = false) {
+            // 목록을 다 썼으면 다시 섞기
             if (chatIndex >= chatData.length) {
                 shuffleArray(chatData);
                 chatIndex = 0;
+                
+                // 💡 [핵심] 새로 섞은 1번 타자가 직전에 친 사람과 똑같으면 순서를 바꿔치기함
+                if (chatData[0].user === lastPrintedUser) {
+                    [chatData[0], chatData[1]] = [chatData[1], chatData[0]];
+                }
             }
 
             const msg = chatData[chatIndex];
             chatIndex++; 
+            lastPrintedUser = msg.user; // 방금 출력한 사람 저장
             
-            // 등급별 아이콘 세팅 (👑 = VIP, 🛡️ = 매니저)
             let badge = "";
             if (msg.type === "vip") badge = "👑 ";
             if (msg.type === "manager") badge = "🛡️ ";
@@ -339,39 +356,36 @@
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg js-prank-btn';
             
-            // 처음 뿌리는 채팅은 튀어오르는 애니메이션 제거
             if(isInit) msgEl.style.animation = "none"; 
             
             msgEl.innerHTML = `<span class="chat-user" style="color: ${msg.color}">${badge}${msg.user}:</span> <span class="chat-text">${msg.text}</span>`;
             
             chatMessages.appendChild(msgEl); 
             
-            // 이전 채팅을 올려볼 수 있도록 최대 50개까지 유지하고 그 이상은 삭제
             if (chatMessages.children.length > 50) {
                 chatMessages.removeChild(chatMessages.firstChild);
             }
             
-            // 새 메시지가 추가되면 스크롤을 항상 맨 아래로 내려줌
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // 2. 이미 몇몇 채팅이 존재하는 상태 설정 (페이지 열리자마자 무작위 5개 미리 출력)
+        // 페이지 열리자마자 5개 깔아두기
         for(let i = 0; i < 5; i++) {
             addFakeMessage(true);
         }
 
-        // 이후 실시간 채팅 시작
+        // 채팅 자동 생성 타이머
         function startChat() {
             addFakeMessage();
-            setTimeout(startChat, Math.random() * 300 + 600);
+            setTimeout(startChat, Math.random() * 800 + 700);
         }
         setTimeout(startChat, 1000);
 
-        // 5. BJ 멘트 (페이지 열리고 정확히 4초 뒤에 출력)
+        // BJ 멘트 (페이지 열리고 정확히 4초 뒤에 출력)
         setTimeout(() => {
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg bj-msg js-prank-btn';
-            msgEl.innerHTML = `<span class="chat-user bj-name">📢 BJ ${currentData.name}:</span> <span class="chat-text bj-text">오늘은 20분 뒤까지만 무료 입장 가능해요. 추천 즐겨찾기 필수! ❤️</span>`;
+            msgEl.innerHTML = `<span class="chat-user bj-name">📢 BJ ${currentData.name}:</span> <span class="chat-text bj-text"> 입장 20분 뒤에 막을게요! 추천 즐겨찾기 필수! ❤️</span>`;
             chatMessages.appendChild(msgEl);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 4000);

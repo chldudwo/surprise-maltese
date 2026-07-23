@@ -79,8 +79,39 @@
             100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-        #fake-chat-zone { flex: 1; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); position: relative; }
-        #chat-messages { display: flex; flex-direction: column-reverse; gap: 8px; height: 100%; width: 100%; }
+/* 1. 채팅창(부모 컨테이너) 크기 완벽 고정 (height 220px 고정) */
+        #fake-chat-zone { 
+            flex: 1; /* 기존 flex 유지 */
+            height: 220px; 
+            max-height: 220px; /* 창이 더 늘어나는 것을 절대 방지 */
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border-radius: 16px; 
+            padding: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; /* 부모 영역 밖으로 삐져나가는 것 차단 */
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); 
+            border: 1px solid rgba(0,0,0,0.05); 
+            position: relative; 
+        }
+        
+        /* 3. 실제 채팅이 담기는 영역 (스크롤 생성 핵심) */
+        #chat-messages { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            height: 100%; /* 부모 높이(220px)에 맞춤 */
+            width: 100%; 
+            overflow-y: auto; /* 내용이 넘치면 세로 스크롤 생성 */
+            padding-right: 5px; 
+            scroll-behavior: smooth; 
+        }
+        /* 커스텀 스크롤바 디자인 */
+        #chat-messages::-webkit-scrollbar { width: 5px; }
+        #chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
         .chat-msg { font-size: 12px; line-height: 1.4; animation: fade-in-up 0.3s ease-out; cursor: pointer; }
         .chat-user { font-weight: bold; color: #00AEEF; }
         .chat-text { color: #4b5563; }

@@ -293,62 +293,88 @@
             logToBackend("entry");
         }
 // ==========================================
-        // 💬 4. 가짜 실시간 채팅 로직 (중복 방지 셔플)
+        // 💬 4. 가짜 실시간 채팅 로직 (디테일 업그레이드)
         // ==========================================
         const chatMessages = document.getElementById('chat-messages');
+        
+        // 4. 유저별 등급(type)과 닉네임 색상(color) 추가
         const chatData = [
-            { user: "vip_kim", text: "방금 올라온 3번째 영상 개지림, 두 발 뺐음;" },
-            { user: "guest_999", text: "ㅗㅜㅑ 고양이 자세 부탁드립니다" },
-            { user: "user001", text: "이 여자는 무료로 해준다고?" },
-            { user: "vip_watcher", text: "영상 길이 15분짜리네 혜자다 오늘 딸감은 너다 ㅋ" },
-            { user: "guest_210", text: "다 비치는데? 개 섹시하다 ㅋㅋ" },
-            { user: "hanjiyu_fan", text: `${currentData.name} 진짜 골반 선 넘었네` },
-            { user: "rlarns", text: `신음 소리 줫대네 ㅋㅋ ${currentData.chatTarget}` },
-            { user: "grewio", text: `와꾸랑 몸매 역대급이네 카메라 더 가까이 당겨봐바` },
-            { user: "guset__", text: `아헤 좀` },
-            { user: "gold_445", text: `후원 리액션 개쎄게 박아 줍니다. 리액션 가자` },
-            { user: "58774485_A", text: `싸대기 ㅈㄴ 때리고 싶다` },
-            { user: "arin", text: `왕복 좀 더 빠르게 해주세요` }
+            { user: "vip_kim", type: "vip", color: "#eab308", text: "방금 올라온 3번째 영상 개지림, 두 발 뺐음;" },
+            { user: "guest_999", type: "normal", color: "#3b82f6", text: "ㅗㅜㅑ 고양이 자세 부탁드립니다" },
+            { user: "user001", type: "normal", color: "#6b7280", text: "이 여자는 무료로 해준다고?" },
+            { user: "vip_watcher", type: "vip", color: "#eab308", text: "영상 길이 15분짜리네 혜자다 오늘 딸감은 너다 ㅋ" },
+            { user: "guest_210", type: "normal", color: "#3b82f6", text: "다 비치는데? 개 섹시하다 ㅋㅋ" },
+            { user: "hanjiyu_fan", type: "manager", color: "#22c55e", text: `${currentData.name} 진짜 골반 선 넘었네` },
+            { user: "rlarns", type: "normal", color: "#6b7280", text: `신음 줫대네 ㅋㅋ ${currentData.chatTarget}` },
+            { user: "grewio", type: "vip", color: "#eab308", text: `와꾸랑 몸매 역대급이네 카메라 더 가까이 당겨봐바` },
+            { user: "guset__", type: "normal", color: "#3b82f6", text: `아헤 좀` },
+            { user: "gold_445", type: "vip", color: "#eab308", text: `후원 리액션 개쎄게 박아 줍니다. 리액션 가자` },
+            { user: "58774485_A", type: "normal", color: "#6b7280", text: `싸대기 ㅈㄴ 때리고 싶다` },
+            { user: "arin", type: "manager", color: "#22c55e", text: `왕복 좀 더 빠르게 해주세요` }
         ];
 
-        // 💡 배열을 무작위로 섞어주는 피셔-예츠(Fisher-Yates) 셔플 함수
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
-
-        // 페이지가 처음 켜질 때 전체 채팅 목록을 한번 섞어줍니다.
         shuffleArray(chatData);
 
         let chatIndex = 0;
-        function addFakeMessage() {
-            // 만약 12개의 메시지를 다 출력했다면? 목록을 다시 무작위로 섞고 처음부터 다시 시작!
+        function addFakeMessage(isInit = false) {
             if (chatIndex >= chatData.length) {
                 shuffleArray(chatData);
                 chatIndex = 0;
             }
 
             const msg = chatData[chatIndex];
-            chatIndex++; // 다음 순서로 이동
+            chatIndex++; 
             
+            // 등급별 아이콘 세팅 (👑 = VIP, 🛡️ = 매니저)
+            let badge = "";
+            if (msg.type === "vip") badge = "👑 ";
+            if (msg.type === "manager") badge = "🛡️ ";
+
             const msgEl = document.createElement('div');
             msgEl.className = 'chat-msg js-prank-btn';
-            msgEl.innerHTML = `<span class="chat-user">${msg.user}:</span> <span class="chat-text">${msg.text}</span>`;
             
-            chatMessages.prepend(msgEl); 
+            // 처음 뿌리는 채팅은 튀어오르는 애니메이션 제거
+            if(isInit) msgEl.style.animation = "none"; 
             
-            if (chatMessages.children.length > 10) {
-                chatMessages.removeChild(chatMessages.lastChild);
+            msgEl.innerHTML = `<span class="chat-user" style="color: ${msg.color}">${badge}${msg.user}:</span> <span class="chat-text">${msg.text}</span>`;
+            
+            chatMessages.appendChild(msgEl); 
+            
+            // 이전 채팅을 올려볼 수 있도록 최대 50개까지 유지하고 그 이상은 삭제
+            if (chatMessages.children.length > 50) {
+                chatMessages.removeChild(chatMessages.firstChild);
             }
+            
+            // 새 메시지가 추가되면 스크롤을 항상 맨 아래로 내려줌
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        // 2. 이미 몇몇 채팅이 존재하는 상태 설정 (페이지 열리자마자 무작위 5개 미리 출력)
+        for(let i = 0; i < 5; i++) {
+            addFakeMessage(true);
+        }
+
+        // 이후 실시간 채팅 시작
         function startChat() {
             addFakeMessage();
-            setTimeout(startChat, Math.random() * 300 + 500);
+            setTimeout(startChat, Math.random() * 300 + 600);
         }
-        setTimeout(startChat, 500);
+        setTimeout(startChat, 1000);
+
+        // 5. BJ 멘트 (페이지 열리고 정확히 4초 뒤에 출력)
+        setTimeout(() => {
+            const msgEl = document.createElement('div');
+            msgEl.className = 'chat-msg bj-msg js-prank-btn';
+            msgEl.innerHTML = `<span class="chat-user bj-name">📢 BJ ${currentData.name}:</span> <span class="chat-text bj-text">오늘은 20분 뒤까지만 무료 입장 가능해요. 추천 즐겨찾기 필수! ❤️</span>`;
+            chatMessages.appendChild(msgEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 4000);
 
         // ==========================================
         // 🎭 5. 지옥문 오픈 (최종 Prank 로직)
